@@ -1,0 +1,15 @@
+
+dist
+coverage
+node_modules
+.env.local
+*.tsbuildinfo
+
+.ph
+projects-import.js
+
+# Android signing keys — never commit
+*.jks
+*.keystore
+keystore.properties
+play-service-account*.json

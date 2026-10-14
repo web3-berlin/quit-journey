@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shows behind the system bars when an older WebView is laid out inside them (sky on top, air below). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient android:angle="270" android:startColor="#7FB8DC" android:centerColor="#E4F0F7" android:endColor="#E4F0F7" android:centerY="0.12" />
+</shape>

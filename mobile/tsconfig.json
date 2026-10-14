@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "paths": {
+      "document-models/quit-journey": [
+        "./src/core.ts"
+      ],
+      "document-models/quit-journey/v1": [
+        "./src/core.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "capacitor.config.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "android"
+  ]
+}

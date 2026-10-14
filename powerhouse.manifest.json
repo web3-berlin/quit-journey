@@ -1,0 +1,28 @@
+{
+  "name": "w3b-stop-smoking-package",
+  "description": "",
+  "category": "",
+  "publisher": {
+    "name": "",
+    "url": ""
+  },
+  "documentModels": [
+    {
+      "id": "w3b/quit-journey",
+      "name": "Quit Journey"
+    }
+  ],
+  "apps": [],
+  "editors": [
+    {
+      "id": "quit-journey-editor",
+      "name": "Quit Journey Editor",
+      "documentTypes": [
+        "w3b/quit-journey"
+      ]
+    }
+  ],
+  "processors": [],
+  "subgraphs": [],
+  "config": []
+}

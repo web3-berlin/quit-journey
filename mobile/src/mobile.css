@@ -1,0 +1,31 @@
+/* Phone shell: edge-to-edge with Capacitor's injected safe-area insets. */
+:root {
+  --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+}
+html,
+body {
+  margin: 0;
+  background: #e4f0f7;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+#root {
+  min-height: 100vh;
+  padding-bottom: var(--safe-bottom);
+}
+/* Let the sky run under the status bar instead of leaving a gap. */
+#root .qj .sky {
+  margin-top: 0;
+  padding-top: calc(36px + var(--safe-top));
+}
+#root .qj .sos-fab {
+  bottom: calc(24px + var(--safe-bottom));
+}
+#root .qj .sos .sheet {
+  padding-bottom: calc(32px + var(--safe-bottom));
+}
+.boot {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #7fb8dc 0%, #e4f0f7 60%);
+}

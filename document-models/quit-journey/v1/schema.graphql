@@ -1,0 +1,272 @@
+scalar Unknown
+scalar DateTime
+scalar Address
+scalar AttachmentRef
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum ProductType { CIGARETTES ROLL_YOUR_OWN CIGARS VAPE HEATED_TOBACCO OTHER }
+enum CravingTrigger { STRESS COFFEE ALCOHOL AFTER_MEAL BOREDOM SOCIAL WORK DRIVING WAKING_UP PHONE ARGUMENT CELEBRATION LONELINESS OTHER }
+enum CopingStrategy { BREATHING WALK WATER SNACK GUM CALL_SOMEONE DISTRACTION EXERCISE MEDITATION QUIT_AID WAIT_IT_OUT OTHER }
+enum CravingOutcome { RESISTED SMOKED }
+enum QuitAidType { PATCH GUM LOZENGE INHALER MOUTH_SPRAY NASAL_SPRAY VARENICLINE BUPROPION CYTISINE COUNSELING APP_PROGRAM OTHER }
+enum WithdrawalSymptom { IRRITABILITY ANXIETY RESTLESSNESS INSOMNIA HUNGER HEADACHE LOW_MOOD POOR_CONCENTRATION COUGH CONSTIPATION DIZZINESS }
+
+type QuitPlan {
+    quitDateTime: DateTime!
+    productType: ProductType!
+    unitsPerDay: Float!
+    unitsPerPack: Int!
+    packPrice: Float!
+    currency: Currency!
+    yearsSmoked: Float
+}
+
+type Motivation {
+    id: OID!
+    text: String!
+    imageUrl: URL
+}
+
+type Craving {
+    id: OID!
+    timestamp: DateTime!
+    intensity: Int!
+    trigger: CravingTrigger!
+    strategy: CopingStrategy
+    outcome: CravingOutcome!
+    durationMinutes: Int
+    note: String
+}
+
+type Slip {
+    id: OID!
+    timestamp: DateTime!
+    units: Float!
+    trigger: CravingTrigger
+    note: String
+}
+
+type QuitAttempt {
+    id: OID!
+    quitDateTime: DateTime!
+    endedAt: DateTime!
+    reason: String
+}
+
+type CheckIn {
+    id: OID!
+    date: String!
+    mood: Int!
+    cravingLevel: Int!
+    energy: Int
+    sleepQuality: Int
+    weightKg: Float
+    symptoms: [WithdrawalSymptom!]!
+    note: String
+}
+
+type RewardGoal {
+    id: OID!
+    title: String!
+    cost: Float!
+    emoji: String
+    claimedAt: DateTime
+}
+
+type QuitAid {
+    id: OID!
+    type: QuitAidType!
+    name: String
+    dosage: String
+    startedAt: DateTime!
+    endedAt: DateTime
+}
+
+type AidUse {
+    id: OID!
+    aidId: OID!
+    timestamp: DateTime!
+    note: String
+}
+
+type SupportContact {
+    id: OID!
+    name: String!
+    phone: String
+    relation: String
+}
+
+type QuitJourneyState {
+    displayName: String
+    plan: QuitPlan
+    motivations: [Motivation!]!
+    prepTasksDone: [String!]!
+    cravings: [Craving!]!
+    slips: [Slip!]!
+    pastAttempts: [QuitAttempt!]!
+    checkIns: [CheckIn!]!
+    rewards: [RewardGoal!]!
+    aids: [QuitAid!]!
+    aidUses: [AidUse!]!
+    supportContacts: [SupportContact!]!
+    quitlinePhone: String
+}
+
+# plan
+
+input SetQuitPlanInput {
+    quitDateTime: DateTime!
+    productType: ProductType!
+    unitsPerDay: Float!
+    unitsPerPack: Int!
+    packPrice: Float!
+    currency: Currency!
+    yearsSmoked: Float
+}
+
+input SetDisplayNameInput {
+    displayName: String
+}
+
+input AddMotivationInput {
+    id: OID!
+    text: String!
+    imageUrl: URL
+}
+
+input RemoveMotivationInput {
+    id: OID!
+}
+
+input TogglePrepTaskInput {
+    taskKey: String!
+    done: Boolean!
+}
+
+# cravings
+
+input LogCravingInput {
+    id: OID!
+    timestamp: DateTime!
+    intensity: Int!
+    trigger: CravingTrigger!
+    strategy: CopingStrategy
+    outcome: CravingOutcome!
+    durationMinutes: Int
+    note: String
+}
+
+input DeleteCravingInput {
+    id: OID!
+}
+
+# slips
+
+input LogSlipInput {
+    id: OID!
+    timestamp: DateTime!
+    units: Float!
+    trigger: CravingTrigger
+    note: String
+}
+
+input DeleteSlipInput {
+    id: OID!
+}
+
+input RestartJourneyInput {
+    attemptId: OID!
+    endedAt: DateTime!
+    newQuitDateTime: DateTime!
+    reason: String
+}
+
+# checkins
+
+input DailyCheckInInput {
+    id: OID!
+    date: String!
+    mood: Int!
+    cravingLevel: Int!
+    energy: Int
+    sleepQuality: Int
+    weightKg: Float
+    symptoms: [WithdrawalSymptom!]
+    note: String
+}
+
+input DeleteCheckInInput {
+    id: OID!
+}
+
+# rewards
+
+input AddRewardGoalInput {
+    id: OID!
+    title: String!
+    cost: Float!
+    emoji: String
+}
+
+input ClaimRewardInput {
+    id: OID!
+    claimedAt: DateTime!
+}
+
+input DeleteRewardGoalInput {
+    id: OID!
+}
+
+# aids
+
+input AddQuitAidInput {
+    id: OID!
+    type: QuitAidType!
+    name: String
+    dosage: String
+    startedAt: DateTime!
+}
+
+input EndQuitAidInput {
+    id: OID!
+    endedAt: DateTime!
+}
+
+input LogAidUseInput {
+    id: OID!
+    aidId: OID!
+    timestamp: DateTime!
+    note: String
+}
+
+# support
+
+input AddSupportContactInput {
+    id: OID!
+    name: String!
+    phone: String
+    relation: String
+}
+
+input RemoveSupportContactInput {
+    id: OID!
+}
+
+input SetQuitlineInput {
+    phone: String
+}
