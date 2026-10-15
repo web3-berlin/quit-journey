@@ -24,4 +24,4 @@ Standard ICU MessageFormat via [FormatJS `react-intl`](https://formatjs.github.i
 
 ## Adding a language
 
-`locales.ts` lists the 50 locales. Catalogs live in `messages/<code>.ts` and are loaded lazily. `npm run i18n:extract` regenerates `source/en.json`; `tests/i18n.test.ts` checks every catalog for unknown keys, ICU syntax and matching placeholders.
+`locales.ts` lists the 41 locales (English + 40 translations; Arabic-script languages, Indonesian, Malay, Burmese and Odia were stopped before completion and can be added later with the same pipeline). Catalogs live in `messages/<code>.ts` and are loaded lazily. `npm run i18n:extract` regenerates `source/en.json`; `tests/i18n.test.ts` checks every catalog for unknown keys, ICU syntax and matching placeholders.

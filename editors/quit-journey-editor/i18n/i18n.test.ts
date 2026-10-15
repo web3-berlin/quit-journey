@@ -47,8 +47,8 @@ describe("i18n", () => {
     expect(Object.keys(en).length).toBeGreaterThan(0);
   });
 
-  it("has 50 unique locales with a catalog for every non-English one", () => {
-    expect(new Set(LOCALES.map((l) => l.code)).size).toBe(50);
+  it("has unique locales with a catalog for every non-English one", () => {
+    expect(new Set(LOCALES.map((l) => l.code)).size).toBe(LOCALES.length);
     for (const l of LOCALES.filter((x) => x.code !== "en")) expect(catalogs[`./messages/${l.code}.ts`], l.code).toBeDefined();
   });
 
@@ -59,6 +59,7 @@ describe("i18n", () => {
     expect(resolveLocale(["zh-CN"])).toBe("zh-Hans");
     expect(resolveLocale(["tl-PH"])).toBe("fil");
     expect(resolveLocale(["xx", "pt-BR"])).toBe("pt");
+    expect(resolveLocale(["id-ID"])).toBe("en");
     expect(resolveLocale(["xx"])).toBe("en");
   });
 

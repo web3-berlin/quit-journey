@@ -49,7 +49,7 @@ Quit Journey supports your recovery; it isn't medical advice or treatment. Talk 
 
 ## Languages
 
-The app ships in 50 languages (the in-app picker in *My plan → Language*, defaulting to the phone's language). The translations were made with AI and haven't been reviewed by native speakers yet; the app says so when a non-English language is active. Validated recovery scales stay in English.
+The app ships in 41 languages (the in-app picker in *My plan → Language*, defaulting to the phone's language). The translations were made with AI and haven't been reviewed by native speakers yet; the app says so when a non-English language is active. Validated recovery scales stay in English.
 
 The Play listing above is English only for now. Localize it per language later (Play Console → *Store presence → Main store listing → Manage translations*), ideally once each language has had a native review, and add localized screenshots where the UI differs.
 

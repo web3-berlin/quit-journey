@@ -8,7 +8,13 @@ export function setFormatLocale(locale: string) {
 }
 
 const unit = (value: number, u: "year" | "day" | "hour" | "minute", display: "narrow" | "long", digits = 0) =>
-  new Intl.NumberFormat(formatLocale, { style: "unit", unit: u, unitDisplay: display, maximumFractionDigits: digits }).format(value);
+  new Intl.NumberFormat(formatLocale, {
+    style: "unit",
+    unit: u,
+    // CLDR's narrow units are Latin abbreviations in some languages (ja "4d"); short is native everywhere.
+    unitDisplay: display === "narrow" && !formatLocale.startsWith("en") ? "short" : display,
+    maximumFractionDigits: digits,
+  }).format(value);
 
 export function formatMoney(amount: number, currency: string): string {
   try {

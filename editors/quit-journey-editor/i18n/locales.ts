@@ -9,23 +9,22 @@ export interface LocaleInfo {
 }
 
 /**
- * The 50 most-spoken languages (total speakers, Ethnologue 2025 ranking) that have a standard
- * written form and CLDR locale data, so Intl number/date/plural rules work. Spoken varieties
- * without their own written standard (e.g. Egyptian Arabic, Wu, Bhojpuri) are served by their
- * written language (Arabic, Chinese, Hindi). English is the source language.
+ * English plus 40 of the most-spoken languages (total speakers, Ethnologue 2025 ranking) that have
+ * a standard written form and CLDR locale data, so Intl number/date/plural rules work. Spoken
+ * varieties without their own written standard are served by their written language. Arabic,
+ * Persian, Urdu, Pashto, Sindhi, Indonesian, Malay, Burmese and Odia aren't included yet: their
+ * translations were stopped before completion. Right-to-left support (dir="rtl") stays in place
+ * for when they are added. English is the source language.
  */
 export const LOCALES: LocaleInfo[] = [
   { code: "en", name: "English", english: "English", dir: "ltr" },
   { code: "zh-Hans", name: "简体中文", english: "Chinese (Simplified)", dir: "ltr" },
   { code: "hi", name: "हिन्दी", english: "Hindi", dir: "ltr" },
   { code: "es", name: "Español", english: "Spanish", dir: "ltr" },
-  { code: "ar", name: "العربية", english: "Arabic", dir: "rtl" },
   { code: "fr", name: "Français", english: "French", dir: "ltr" },
   { code: "bn", name: "বাংলা", english: "Bengali", dir: "ltr" },
   { code: "pt", name: "Português", english: "Portuguese", dir: "ltr" },
   { code: "ru", name: "Русский", english: "Russian", dir: "ltr" },
-  { code: "ur", name: "اردو", english: "Urdu", dir: "rtl" },
-  { code: "id", name: "Bahasa Indonesia", english: "Indonesian", dir: "ltr" },
   { code: "de", name: "Deutsch", english: "German", dir: "ltr" },
   { code: "ja", name: "日本語", english: "Japanese", dir: "ltr" },
   { code: "pcm", name: "Naijá", english: "Nigerian Pidgin", dir: "ltr" },
@@ -39,7 +38,6 @@ export const LOCALES: LocaleInfo[] = [
   { code: "fil", name: "Filipino", english: "Filipino (Tagalog)", dir: "ltr" },
   { code: "pa", name: "ਪੰਜਾਬੀ", english: "Punjabi", dir: "ltr" },
   { code: "ko", name: "한국어", english: "Korean", dir: "ltr" },
-  { code: "fa", name: "فارسی", english: "Persian", dir: "rtl" },
   { code: "jv", name: "Basa Jawa", english: "Javanese", dir: "ltr" },
   { code: "it", name: "Italiano", english: "Italian", dir: "ltr" },
   { code: "gu", name: "ગુજરાતી", english: "Gujarati", dir: "ltr" },
@@ -49,18 +47,13 @@ export const LOCALES: LocaleInfo[] = [
   { code: "yo", name: "Yorùbá", english: "Yoruba", dir: "ltr" },
   { code: "pl", name: "Polski", english: "Polish", dir: "ltr" },
   { code: "ml", name: "മലയാളം", english: "Malayalam", dir: "ltr" },
-  { code: "or", name: "ଓଡ଼ିଆ", english: "Odia", dir: "ltr" },
-  { code: "my", name: "မြန်မာ", english: "Burmese", dir: "ltr" },
   { code: "uk", name: "Українська", english: "Ukrainian", dir: "ltr" },
   { code: "su", name: "Basa Sunda", english: "Sundanese", dir: "ltr" },
   { code: "ig", name: "Igbo", english: "Igbo", dir: "ltr" },
   { code: "uz", name: "Oʻzbekcha", english: "Uzbek", dir: "ltr" },
-  { code: "sd", name: "سنڌي", english: "Sindhi", dir: "rtl" },
   { code: "ro", name: "Română", english: "Romanian", dir: "ltr" },
   { code: "nl", name: "Nederlands", english: "Dutch", dir: "ltr" },
-  { code: "ps", name: "پښتو", english: "Pashto", dir: "rtl" },
   { code: "az", name: "Azərbaycanca", english: "Azerbaijani", dir: "ltr" },
-  { code: "ms", name: "Bahasa Melayu", english: "Malay", dir: "ltr" },
   { code: "ne", name: "नेपाली", english: "Nepali", dir: "ltr" },
   { code: "zh-Hant", name: "繁體中文", english: "Chinese (Traditional)", dir: "ltr" },
   { code: "zu", name: "isiZulu", english: "Zulu", dir: "ltr" },

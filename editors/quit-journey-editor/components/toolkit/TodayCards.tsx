@@ -97,7 +97,7 @@ export function TodayCards(props: TabProps) {
           <p>
             {ladder.recovering
               ? intl.formatMessage(
-                { id: "toolkit.today.ladder.rebuilding", defaultMessage: "Rebuilding: {days, plural, one {# more clean day} other {# more clean days}} restores your old level." },
+                { id: "toolkit.today.ladder.rebuilding", defaultMessage: "Rebuilding: {days, plural, one {# more day without using} other {# more days without using}} restores your old level." },
                 { days: ladder.restoreInDays },
               )
               : intl.formatMessage(
@@ -106,7 +106,7 @@ export function TodayCards(props: TabProps) {
               )}
           </p>
           <Meter value={Math.min(1, ladder.nextPoints / 100)} tone="amber" label={intl.formatMessage({ id: "toolkit.today.ladder.meter", defaultMessage: "Ladder level" })} />
-          <p className="muted">{intl.formatMessage({ id: "toolkit.today.ladder.explainer", defaultMessage: "Each clean day is worth more than the last; a slip resets the value, and three good days bring it back. Ask a supporter to turn points into real rewards." })}</p>
+          <p className="muted">{intl.formatMessage({ id: "toolkit.today.ladder.explainer", defaultMessage: "Each day without using is worth more than the last; a slip resets the value, and three good days bring it back. Ask a supporter to turn points into real rewards." })}</p>
         </section>
       )}
     </>
