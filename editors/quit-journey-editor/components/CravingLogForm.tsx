@@ -1,20 +1,24 @@
 import { generateId } from "document-model";
-import { actions, type CopingStrategy, type CravingOutcome, type CravingTrigger } from "document-models/quit-journey";
+import { actions, type CopingStrategy, type CravingOutcome, type CravingTrigger, type SubstanceProfile } from "document-models/quit-journey";
 import { useState } from "react";
 import { entries, STRATEGY_LABELS, TRIGGER_LABELS } from "../lib/labels.js";
 import type { Dispatch } from "../lib/types.js";
+import { SafetyNotes } from "./SafetyNotes.js";
 import { Field, Scale, Select } from "./ui.js";
 
 interface Props {
   dispatch: Dispatch;
   now: number;
+  profile: SubstanceProfile;
+  /** True when the goal is cutting down, so use is expected rather than a slip. */
+  reducing: boolean;
   /** Prefilled from the SOS screen. */
   initialStrategy?: CopingStrategy | null;
   initialDurationMinutes?: number | null;
   onDone: () => void;
 }
 
-export function CravingLogForm({ dispatch, now, initialStrategy, initialDurationMinutes, onDone }: Props) {
+export function CravingLogForm({ dispatch, now, profile, reducing, initialStrategy, initialDurationMinutes, onDone }: Props) {
   const [intensity, setIntensity] = useState<number | null>(3);
   const [trigger, setTrigger] = useState<CravingTrigger | "">("");
   const [strategy, setStrategy] = useState<CopingStrategy | "">(initialStrategy ?? "");
@@ -54,12 +58,17 @@ export function CravingLogForm({ dispatch, now, initialStrategy, initialDuration
       </div>
       <div className="chips" role="group" aria-label="Outcome">
         <button type="button" className="chip" aria-pressed={outcome === "RESISTED"} onClick={() => setOutcome("RESISTED")}>I resisted it</button>
-        <button type="button" className="chip" aria-pressed={outcome === "SMOKED"} onClick={() => setOutcome("SMOKED")}>I smoked</button>
+        <button type="button" className="chip" aria-pressed={outcome === "SMOKED"} onClick={() => setOutcome("SMOKED")}>I used</button>
       </div>
       {outcome === "SMOKED" && (
         <div className="panel tint-ember stack">
-          <p>A slip isn't a failure — your quit date stays. Logging it honestly keeps your savings and health timeline accurate.</p>
-          <Field label="How many?">
+          <p>
+            {reducing
+              ? "Logged against today's limit. Honest numbers are what make cutting down work."
+              : "A slip isn't a failure — your start date stays. Logging it honestly keeps your savings and recovery timeline accurate."}
+          </p>
+          {profile.overdoseRiskAfterBreak && <SafetyNotes notes={profile.safety.filter((n) => n.level === "critical")} />}
+          <Field label={`How many ${profile.unit}?`}>
             <input type="number" min="0.5" step="0.5" value={units} onChange={(e) => setUnits(e.target.value)} />
           </Field>
         </div>

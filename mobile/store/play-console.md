@@ -14,11 +14,11 @@ Paste the public URL of `privacy-policy.md`.
 ## Content rating (IARC questionnaire)
 - Category: *Reference, news or educational* is the closest fit if offered; otherwise *All other app types*.
 - Violence, sexuality, language, gambling: **No**.
-- Controlled substances / tobacco: the app **references tobacco** only to help users stop using it; it does not depict, sell or encourage use. Answer the tobacco reference question **Yes** and describe it as anti-smoking/educational if the form allows.
+- Controlled substances, alcohol, tobacco, gambling: the app **references** them only to help users stop or cut down (recovery, harm-reduction safety information such as naloxone and overdose signs). It does not depict use, sell anything, link to suppliers or encourage use. Answer the reference questions **Yes** and describe them as recovery/educational where the form allows. There is no real-money gambling in the app.
 - User interaction / sharing: **No** user-to-user communication, **no** location sharing. Users can share a backup file via the system share sheet; the app has no social features.
 
 ## Target audience
-**18 and over** only. (Keeps the app outside the Families policy, which fits a tobacco-cessation app.)
+**18 and over** only. (Keeps the app outside the Families policy, which fits an addiction-recovery app.)
 
 ## Data safety
 - Does the app collect or share any required user data types? **No.**
@@ -27,10 +27,11 @@ Paste the public URL of `privacy-policy.md`.
 - Data deletion: users delete everything by uninstalling or clearing storage (no account exists).
 
 ## Health apps declaration
-Select the closest health category the form offers for **addiction/habit cessation and wellness tracking** (for example *Health and fitness* / *Habit tracking*). The app:
+Select the closest health category the form offers for **addiction recovery / habit cessation and wellness tracking** (for example *Health and fitness* / *Habit tracking*). The app:
 - does **not** diagnose, treat or claim to cure any condition,
 - does **not** connect to medical devices or Health Connect,
-- shows educational timelines with cited public-health sources (WHO, CDC, ACS, NHS) and a disclaimer in *My plan → About*.
+- shows educational timelines with cited public-health sources (WHO, CDC, NHS, NIAAA, NIDA, SAMHSA and named studies) and a disclaimer in *My plan → About*,
+- shows harm-reduction safety information (overdose signs, naloxone, never use alone, medically supervised withdrawal) — be ready to point reviewers to it if they ask about drug references.
 
 ## Government apps / financial features / news
 **No** to each.

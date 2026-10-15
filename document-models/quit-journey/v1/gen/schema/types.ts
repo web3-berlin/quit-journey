@@ -117,13 +117,18 @@ export type ClaimRewardInput = {
 export type CopingStrategy =
   | "BREATHING"
   | "CALL_SOMEONE"
+  | "COLD_WATER"
   | "DISTRACTION"
   | "EXERCISE"
   | "GUM"
   | "MEDITATION"
   | "OTHER"
+  | "PLAY_THE_TAPE"
+  | "PRAYER"
   | "QUIT_AID"
   | "SNACK"
+  | "SUPPORT_MEETING"
+  | "URGE_SURFING"
   | "WAIT_IT_OUT"
   | "WALK"
   | "WATER";
@@ -144,16 +149,24 @@ export type CravingOutcome = "RESISTED" | "SMOKED";
 export type CravingTrigger =
   | "AFTER_MEAL"
   | "ALCOHOL"
+  | "ANGRY"
   | "ARGUMENT"
+  | "BAD_NEWS"
   | "BOREDOM"
   | "CELEBRATION"
   | "COFFEE"
   | "DRIVING"
+  | "HUNGRY"
   | "LONELINESS"
   | "OTHER"
+  | "PAIN"
+  | "PAYDAY"
+  | "PEOPLE_PLACES"
   | "PHONE"
+  | "SEEING_IT"
   | "SOCIAL"
   | "STRESS"
+  | "TIRED"
   | "WAKING_UP"
   | "WORK";
 
@@ -223,11 +236,23 @@ export type Motivation = {
 };
 
 export type ProductType =
+  | "ALCOHOL"
+  | "BENZODIAZEPINES"
+  | "CAFFEINE"
+  | "CANNABIS"
   | "CIGARETTES"
   | "CIGARS"
+  | "GAMBLING"
+  | "GAMING"
   | "HEATED_TOBACCO"
+  | "KRATOM"
+  | "OPIOIDS"
   | "OTHER"
+  | "PORNOGRAPHY"
   | "ROLL_YOUR_OWN"
+  | "SOCIAL_MEDIA"
+  | "STIMULANTS"
+  | "SUGAR"
   | "VAPE";
 
 export type QuitAid = {
@@ -240,17 +265,24 @@ export type QuitAid = {
 };
 
 export type QuitAidType =
+  | "ACAMPROSATE"
   | "APP_PROGRAM"
+  | "BUPRENORPHINE"
   | "BUPROPION"
   | "COUNSELING"
   | "CYTISINE"
+  | "DISULFIRAM"
   | "GUM"
   | "INHALER"
   | "LOZENGE"
+  | "METHADONE"
   | "MOUTH_SPRAY"
+  | "NALTREXONE"
   | "NASAL_SPRAY"
   | "OTHER"
   | "PATCH"
+  | "SUPPORT_GROUP"
+  | "THERAPY"
   | "VARENICLINE";
 
 export type QuitAttempt = {
@@ -278,13 +310,19 @@ export type QuitJourneyState = {
 
 export type QuitPlan = {
   currency: Scalars["Currency"]["output"];
+  customName: Maybe<Scalars["String"]["output"]>;
+  dailyLimit: Maybe<Scalars["Float"]["output"]>;
+  goal: Maybe<RecoveryGoal>;
   packPrice: Scalars["Float"]["output"];
   productType: ProductType;
   quitDateTime: Scalars["DateTime"]["output"];
+  unitLabel: Maybe<Scalars["String"]["output"]>;
   unitsPerDay: Scalars["Float"]["output"];
   unitsPerPack: Scalars["Int"]["output"];
   yearsSmoked: Maybe<Scalars["Float"]["output"]>;
 };
+
+export type RecoveryGoal = "ABSTINENCE" | "REDUCTION";
 
 export type RemoveMotivationInput = {
   id: Scalars["OID"]["input"];
@@ -315,9 +353,13 @@ export type SetDisplayNameInput = {
 
 export type SetQuitPlanInput = {
   currency: Scalars["Currency"]["input"];
+  customName?: InputMaybe<Scalars["String"]["input"]>;
+  dailyLimit?: InputMaybe<Scalars["Float"]["input"]>;
+  goal?: InputMaybe<RecoveryGoal>;
   packPrice: Scalars["Float"]["input"];
   productType: ProductType;
   quitDateTime: Scalars["DateTime"]["input"];
+  unitLabel?: InputMaybe<Scalars["String"]["input"]>;
   unitsPerDay: Scalars["Float"]["input"];
   unitsPerPack: Scalars["Int"]["input"];
   yearsSmoked?: InputMaybe<Scalars["Float"]["input"]>;
@@ -348,14 +390,22 @@ export type TogglePrepTaskInput = {
 };
 
 export type WithdrawalSymptom =
+  | "ANHEDONIA"
   | "ANXIETY"
+  | "CHILLS"
   | "CONSTIPATION"
   | "COUGH"
+  | "DIARRHEA"
   | "DIZZINESS"
   | "HEADACHE"
   | "HUNGER"
   | "INSOMNIA"
   | "IRRITABILITY"
   | "LOW_MOOD"
+  | "MUSCLE_ACHES"
+  | "NAUSEA"
   | "POOR_CONCENTRATION"
-  | "RESTLESSNESS";
+  | "RESTLESSNESS"
+  | "SWEATING"
+  | "TREMOR"
+  | "VIVID_DREAMS";

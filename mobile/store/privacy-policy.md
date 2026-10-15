@@ -1,12 +1,12 @@
 # Quit Journey privacy policy
 
-_Last updated: 14 October 2026_
+_Last updated: 15 October 2026_
 
-Quit Journey is a stop-smoking app. This policy explains what happens to the information you enter.
+Quit Journey is an addiction-recovery app. This policy explains what happens to the information you enter.
 
 ## What the app stores
 
-Everything you enter — your quit date and smoking habits, cravings, slips, daily check-ins (including mood, sleep, weight and withdrawal symptoms), rewards, quit aids, support contacts and notes — is stored **only on your device**, in the app's private storage.
+Everything you enter — what you are quitting, your start date and usage habits, cravings, slips, daily check-ins (including mood, sleep, weight and withdrawal symptoms), rewards, quit aids, support contacts and notes — is stored **only on your device**, in the app's private storage.
 
 ## What we collect
 

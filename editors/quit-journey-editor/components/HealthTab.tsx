@@ -8,7 +8,8 @@ export function HealthTab({ snapshot }: TabProps) {
     <section className="stack">
       <h2>How your body is recovering</h2>
       <p className="soft">
-        Measured from your last cigarette. These are typical timelines from WHO, CDC and NHS guidance — everyone heals at their own pace.
+        {snapshot.profile.name}: measured from your last use. These are typical timelines, not guarantees — everyone heals at their own pace.
+        {snapshot.reduction && " While you're cutting down, the timeline restarts after each use; it fills up during your longest breaks."}
       </p>
       <ol className="timeline" style={{ marginTop: 20 }}>
         {snapshot.health.map((h) => (
@@ -28,6 +29,7 @@ export function HealthTab({ snapshot }: TabProps) {
           </li>
         ))}
       </ol>
+      {snapshot.profile.sources.length > 0 && <p className="muted">Sources: {snapshot.profile.sources.join(", ")}.</p>}
     </section>
   );
 }

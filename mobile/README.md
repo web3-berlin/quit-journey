@@ -1,7 +1,7 @@
 # Quit Journey for Android
 
 The phone app around the shared Quit Journey UI (`editors/quit-journey-editor/QuitJourneyApp.tsx`).
-It runs the real document-model reducer locally and stores the journey in app-private storage, so it works fully offline with no account.
+It runs the real document-model reducer locally and stores each journey (one per addiction) in app-private storage, so it works fully offline with no account. Version 1.0 data (`quit-journey.json`) is migrated automatically into the journey index on first launch.
 
 - **App ID:** `com.w3b.quitjourney` — permanent after the first Play upload. Change it in `capacitor.config.ts` and `android/app/build.gradle` *before* that if you want another one.
 - **Stack:** Vite + React, Capacitor 8 (target SDK 36), local notifications, filesystem, share.

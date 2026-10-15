@@ -1,6 +1,6 @@
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications, type LocalNotificationSchema } from "@capacitor/local-notifications";
-import { computeJourney, type QuitJourneyState } from "./core.js";
+import { computeJourney, type QuitJourneyDocument, type QuitJourneyState } from "./core.js";
 
 export interface NotifySettings {
   enabled: boolean;
@@ -48,14 +48,17 @@ export async function requestPermission(): Promise<boolean> {
 const MILESTONE_BASE = 1000;
 const MAX_MILESTONES = 12;
 
-/** Builds the full notification schedule for the current state (pure, exported for testing). */
-export function buildSchedule(state: QuitJourneyState, settings: NotifySettings, now: number): LocalNotificationSchema[] {
+/** Each journey gets its own block of notification ids. */
+const JOURNEY_ID_BLOCK = 10_000;
+
+/** Builds the notification schedule for one journey (pure, exported for testing). */
+export function buildSchedule(state: QuitJourneyState, settings: NotifySettings, now: number, journeyIndex = 0, labelled = false): LocalNotificationSchema[] {
   if (!settings.enabled) return [];
   const snap = computeJourney(state, now);
   const list: LocalNotificationSchema[] = [];
 
   if (snap.phase === "PREP" && snap.quitAt !== null) {
-    list.push({ id: 10, title: "Today's the day", body: "Your quit day starts now. Open the app to watch the sky clear.", channelId: "milestones", schedule: { at: new Date(snap.quitAt), allowWhileIdle: true } });
+    list.push({ id: 10, title: "Day one starts now", body: "Your journey starts today. Open the app to watch the sky clear.", channelId: "milestones", schedule: { at: new Date(snap.quitAt), allowWhileIdle: true } });
   }
 
   snap.health
@@ -81,16 +84,23 @@ export function buildSchedule(state: QuitJourneyState, settings: NotifySettings,
     });
   }
   // Minutes of slack are fine for reminders; exact alarms would send users to a system settings screen.
-  return list.map((n) => ({ ...n, isExactNotification: false }));
+  return list.map((n) => ({
+    ...n,
+    id: journeyIndex * JOURNEY_ID_BLOCK + n.id,
+    title: labelled ? `${snap.profile.name}: ${n.title}` : n.title,
+    isExactNotification: false,
+  }));
 }
 
-/** Replaces all pending notifications with a freshly computed schedule. */
-export async function syncNotifications(state: QuitJourneyState, settings: NotifySettings) {
+/** Replaces all pending notifications with a freshly computed schedule for every journey. */
+export async function syncNotifications(docs: QuitJourneyDocument[], settings: NotifySettings) {
   if (!isNative()) return;
   const pending = await LocalNotifications.getPending();
   if (pending.notifications.length) {
     await LocalNotifications.cancel({ notifications: pending.notifications.map((n) => ({ id: n.id })) });
   }
-  const schedule = buildSchedule(state, settings, Date.now());
+  const now = Date.now();
+  const started = docs.filter((d) => d.state.global.plan);
+  const schedule = started.flatMap((d, i) => buildSchedule(d.state.global, settings, now, i, started.length > 1));
   if (schedule.length) await LocalNotifications.schedule({ notifications: schedule });
 }

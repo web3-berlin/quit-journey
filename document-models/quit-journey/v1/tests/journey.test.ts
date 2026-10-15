@@ -23,7 +23,7 @@ import {
   togglePrepTask,
 } from "document-models/quit-journey/v1";
 import { describe, expect, it } from "vitest";
-import { addDays, errs, planInput, QUIT, run } from "./helpers.js";
+import { addDays, errs, planInput, QUIT, run, storedPlan } from "./helpers.js";
 
 describe("QuitJourney full journey scenario", () => {
   it("chains planning, cravings, slips, check-ins, rewards, aids, support and a restart", () => {
@@ -137,7 +137,7 @@ describe("QuitJourney full journey scenario", () => {
 
     const s = beforeTrip.state.global;
     expect(s.displayName).toBe("Alex");
-    expect(s.plan).toEqual({ ...planInput({ yearsSmoked: 12 }), quitDateTime: secondQuit });
+    expect(s.plan).toEqual(storedPlan({ yearsSmoked: 12, quitDateTime: secondQuit }));
     expect(s.motivations).toEqual([
       { id: ids.why1, text: "For my kids", imageUrl: "https://example.com/kids.png" },
     ]);

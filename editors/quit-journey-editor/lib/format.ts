@@ -43,3 +43,12 @@ export function fromLocalInput(value: string): string {
 }
 
 export const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/** Rough singular of a unit label: "drinks" → "drink", "hours" → "hour". */
+export function singular(unit: string): string {
+  return unit.endsWith("s") ? unit.slice(0, -1) : unit;
+}
+
+export function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}

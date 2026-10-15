@@ -7,16 +7,16 @@ export interface PrepTaskDef {
   hint: string;
 }
 
-/** Pre-quit readiness checklist (based on the NHS / CDC "STAR" quit preparation advice). */
+/** Pre-quit readiness checklist (adapted from NHS / CDC quit-preparation advice). */
 export const PREP_TASKS: PrepTaskDef[] = [
   { key: "set-date", title: "Set your quit date", hint: "Pick a day within the next two weeks — not a high-stress one." },
   { key: "add-why", title: "Write down your why", hint: "Add at least three reasons. You'll see them in every craving." },
   { key: "tell-people", title: "Tell friends & family", hint: "Ask for support and add one person to call in an emergency." },
   { key: "know-triggers", title: "Know your triggers", hint: "Coffee, alcohol, after meals, stress? Plan a swap for each." },
-  { key: "get-aid", title: "Get a quit aid", hint: "Patches, gum or medication roughly double your chance of success." },
-  { key: "clean-sweep", title: "Clean sweep", hint: "Remove cigarettes, lighters and ashtrays from home, car and bags." },
+  { key: "get-aid", title: "Line up medication or support", hint: "Nicotine replacement, addiction medication, therapy and support groups each substantially improve your odds. Ask a doctor or pharmacist." },
+  { key: "clean-sweep", title: "Clear it out", hint: "Remove whatever you use, and the things you use it with, from home, car, bags and phone." },
   { key: "plan-reward", title: "Plan your first reward", hint: "Pick something your first week of savings will buy." },
-  { key: "save-quitline", title: "Save a quitline number", hint: "Free expert support, one tap away in the SOS screen." },
+  { key: "save-quitline", title: "Save a helpline number", hint: "Free expert support, one tap away in the SOS screen." },
 ];
 
 export interface PrepStatus {

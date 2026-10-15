@@ -1,11 +1,12 @@
 import type { BadgeCategory } from "document-models/quit-journey";
+import { capitalize } from "../lib/format.js";
 import type { TabProps } from "../lib/types.js";
 import { Meter } from "./ui.js";
 
 const CATEGORY_TITLES: Record<BadgeCategory, string> = {
-  TIME: "Time smoke-free",
+  TIME: "Time on your journey",
   MONEY: "Money saved",
-  AVOIDED: "Cigarettes not smoked",
+  AVOIDED: "Skipped",
   CRAVINGS: "Beating cravings",
   HABITS: "Healthy habits",
   SUPPORT: "Your support system",
@@ -22,7 +23,7 @@ export function BadgesTab({ snapshot }: TabProps) {
       </div>
       {categories.map((cat) => (
         <section key={cat} className="stack">
-          <h3>{CATEGORY_TITLES[cat]}</h3>
+          <h3>{cat === "AVOIDED" ? `${capitalize(snapshot.profile.unit)} skipped` : CATEGORY_TITLES[cat]}</h3>
           <div className="badges">
             {badges.filter((b) => b.category === cat).map((b) => (
               <div key={b.key} className={b.earned ? "badge earned" : "badge locked"}>

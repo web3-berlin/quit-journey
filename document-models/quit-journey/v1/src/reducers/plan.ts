@@ -2,6 +2,7 @@ import type { QuitJourneyPlanOperations } from "document-models/quit-journey/v1"
 import {
   EmptyMotivationError,
   InvalidQuitPlanError,
+  InvalidReductionGoalError,
   MotivationNotFoundError,
 } from "../../gen/plan/error.js";
 
@@ -13,6 +14,19 @@ export const quitJourneyPlanOperations: QuitJourneyPlanOperations = {
         "unitsPerDay and unitsPerPack must be positive and packPrice must not be negative",
       );
     }
+    let dailyLimit: number | null = null;
+    if (i.goal === "REDUCTION") {
+      if (
+        i.dailyLimit == null ||
+        i.dailyLimit <= 0 ||
+        i.dailyLimit >= i.unitsPerDay
+      ) {
+        throw new InvalidReductionGoalError(
+          "A reduction goal needs a daily limit above 0 and below your current daily amount",
+        );
+      }
+      dailyLimit = i.dailyLimit;
+    }
     state.plan = {
       quitDateTime: i.quitDateTime,
       productType: i.productType,
@@ -21,6 +35,10 @@ export const quitJourneyPlanOperations: QuitJourneyPlanOperations = {
       packPrice: i.packPrice,
       currency: i.currency,
       yearsSmoked: i.yearsSmoked ?? null,
+      customName: i.customName?.trim() || null,
+      unitLabel: i.unitLabel?.trim() || null,
+      goal: i.goal ?? null,
+      dailyLimit,
     };
   },
   setDisplayNameOperation(state, action) {

@@ -12,7 +12,19 @@ export const PRODUCT_LABELS: Record<ProductType, string> = {
   CIGARS: "Cigars",
   VAPE: "Vape",
   HEATED_TOBACCO: "Heated tobacco",
-  OTHER: "Other",
+  OTHER: "Something else",
+  ALCOHOL: "Alcohol",
+  CANNABIS: "Cannabis",
+  OPIOIDS: "Opioids (heroin, fentanyl, pills)",
+  STIMULANTS: "Stimulants (cocaine, meth, speed)",
+  BENZODIAZEPINES: "Benzodiazepines",
+  KRATOM: "Kratom",
+  GAMBLING: "Gambling",
+  GAMING: "Gaming",
+  PORNOGRAPHY: "Pornography",
+  SOCIAL_MEDIA: "Social media",
+  CAFFEINE: "Caffeine",
+  SUGAR: "Sugar",
 };
 
 export const TRIGGER_LABELS: Record<CravingTrigger, string> = {
@@ -21,7 +33,7 @@ export const TRIGGER_LABELS: Record<CravingTrigger, string> = {
   ALCOHOL: "Alcohol",
   AFTER_MEAL: "After a meal",
   BOREDOM: "Boredom",
-  SOCIAL: "Around smokers",
+  SOCIAL: "Around people who use",
   WORK: "Work break",
   DRIVING: "Driving",
   WAKING_UP: "Waking up",
@@ -30,6 +42,14 @@ export const TRIGGER_LABELS: Record<CravingTrigger, string> = {
   CELEBRATION: "Celebrating",
   LONELINESS: "Feeling lonely",
   OTHER: "Something else",
+  HUNGRY: "Hungry",
+  ANGRY: "Angry",
+  TIRED: "Tired",
+  PAIN: "In pain",
+  PAYDAY: "Payday / cash in hand",
+  PEOPLE_PLACES: "Certain people or places",
+  SEEING_IT: "Saw it or an ad for it",
+  BAD_NEWS: "Bad news",
 };
 
 export const STRATEGY_LABELS: Record<CopingStrategy, string> = {
@@ -45,6 +65,11 @@ export const STRATEGY_LABELS: Record<CopingStrategy, string> = {
   QUIT_AID: "Used my quit aid",
   WAIT_IT_OUT: "Waited it out",
   OTHER: "Something else",
+  URGE_SURFING: "Urge surfing",
+  SUPPORT_MEETING: "Went to a meeting",
+  PLAY_THE_TAPE: "Played the tape forward",
+  COLD_WATER: "Cold water on face",
+  PRAYER: "Prayer or reflection",
 };
 
 export const AID_LABELS: Record<QuitAidType, string> = {
@@ -60,6 +85,13 @@ export const AID_LABELS: Record<QuitAidType, string> = {
   COUNSELING: "Counseling",
   APP_PROGRAM: "Support program",
   OTHER: "Other",
+  METHADONE: "Methadone",
+  BUPRENORPHINE: "Buprenorphine",
+  NALTREXONE: "Naltrexone",
+  ACAMPROSATE: "Acamprosate",
+  DISULFIRAM: "Disulfiram",
+  SUPPORT_GROUP: "Support group (AA, NA, SMART…)",
+  THERAPY: "Therapy (CBT etc.)",
 };
 
 export const SYMPTOM_LABELS: Record<WithdrawalSymptom, string> = {
@@ -74,6 +106,14 @@ export const SYMPTOM_LABELS: Record<WithdrawalSymptom, string> = {
   COUGH: "Coughing",
   CONSTIPATION: "Constipation",
   DIZZINESS: "Dizzy",
+  NAUSEA: "Nauseous",
+  SWEATING: "Sweating",
+  MUSCLE_ACHES: "Aching muscles",
+  TREMOR: "Shaky",
+  CHILLS: "Chills",
+  VIVID_DREAMS: "Vivid dreams",
+  ANHEDONIA: "Nothing feels good",
+  DIARRHEA: "Diarrhea",
 };
 
 export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

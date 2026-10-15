@@ -3,6 +3,7 @@ import { formatMoney, pad2 } from "../lib/format.js";
 import { STRATEGY_LABELS } from "../lib/labels.js";
 import type { TabProps } from "../lib/types.js";
 import { CravingLogForm } from "./CravingLogForm.js";
+import { SafetyNotes } from "./SafetyNotes.js";
 
 /** 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s. */
 const PHASES = [
@@ -48,7 +49,7 @@ export function SosOverlay({ state, snapshot, dispatch, onClose }: TabProps & { 
           <button type="button" className="linkish" onClick={onClose}>Close</button>
         </div>
         {logging ? (
-          <CravingLogForm dispatch={dispatch} now={Date.now()} initialStrategy="BREATHING" initialDurationMinutes={Math.max(1, Math.round(elapsed / 60))} onDone={onClose} />
+          <CravingLogForm dispatch={dispatch} now={Date.now()} profile={snapshot.profile} reducing={snapshot.reduction !== null} initialStrategy="BREATHING" initialDurationMinutes={Math.max(1, Math.round(elapsed / 60))} onDone={onClose} />
         ) : (
           <>
             <div className="breath-stage"><div className="breath" style={{ transform: `scale(${phase.scale})`, transitionDuration: `${phase.seconds}s` }} aria-live="polite">
@@ -69,9 +70,10 @@ export function SosOverlay({ state, snapshot, dispatch, onClose }: TabProps & { 
                 {state.supportContacts.filter((c) => c.phone).map((c) => (
                   <a key={c.id} className="btn ghost small" href={`tel:${c.phone}`}>Call {c.name}</a>
                 ))}
-                {state.quitlinePhone && <a className="btn ghost small" href={`tel:${state.quitlinePhone}`}>Call the quitline</a>}
+                {state.quitlinePhone && <a className="btn ghost small" href={`tel:${state.quitlinePhone}`}>Call the helpline</a>}
               </div>
             )}
+            {snapshot.profile.overdoseRiskAfterBreak && <SafetyNotes notes={snapshot.profile.safety.slice(0, 2)} />}
             <button type="button" className="btn" onClick={() => setLogging(true)}>{left > 0 ? "Log this craving" : "Log my win"}</button>
           </>
         )}

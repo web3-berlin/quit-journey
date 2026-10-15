@@ -41,6 +41,18 @@ export function planInput(overrides: Partial<SetQuitPlanInput> = {}): SetQuitPla
   };
 }
 
+/** The plan the reducer stores for an input without the optional addiction fields. */
+export function storedPlan(overrides: Partial<SetQuitPlanInput> = {}) {
+  return {
+    yearsSmoked: null,
+    customName: null,
+    unitLabel: null,
+    goal: null,
+    dailyLimit: null,
+    ...planInput(overrides),
+  };
+}
+
 export const withPlan = (overrides: Partial<SetQuitPlanInput> = {}) =>
   run([setQuitPlan(planInput(overrides))]);
 

@@ -29,3 +29,36 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, #7fb8dc 0%, #e4f0f7 60%);
 }
+
+/* Journey switcher pill floating over the sky. */
+#root .qj {
+  position: relative;
+}
+.journey-switcher {
+  position: absolute;
+  top: calc(var(--safe-top) + 12px);
+  right: 16px;
+  z-index: 5;
+}
+#root .journey-switcher select {
+  width: auto;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 30px 7px 14px;
+  font: 600 0.9rem "Atkinson Hyperlegible", system-ui, sans-serif;
+  color: #14372f;
+  background: rgba(251, 253, 254, 0.75) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2314372f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 11px center;
+  max-width: 60vw;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+/* Leave room for the journey pill above the greeting. */
+#root .qj:has(.journey-switcher) .sky {
+  padding-top: calc(72px + var(--safe-top));
+}

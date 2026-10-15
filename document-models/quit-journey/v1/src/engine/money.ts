@@ -1,4 +1,5 @@
 import type { QuitJourneyState } from "document-models/quit-journey/v1";
+import { profileForPlan } from "./substances.js";
 import { DAY } from "./time.js";
 
 /**
@@ -50,6 +51,8 @@ export interface MoneyStats {
   projectedYearlySavings: number;
   /** null for products where the per-cigarette estimate does not apply. */
   lifeRegainedMinutes: number | null;
+  /** Hours of your day given back (behavioural addictions); null when not applicable. */
+  timeRegainedMinutes: number | null;
 }
 
 /**
@@ -66,7 +69,7 @@ export function computeMoney(state: QuitJourneyState, now: number): MoneyStats |
   const unitsAvoidedCurrent = current ? unitsAvoidedIn(state, current) : 0;
   const moneySaved = unitsAvoided * pricePerUnit;
   const moneySpentOnRewards = state.rewards.reduce((sum, r) => sum + (r.claimedAt ? r.cost : 0), 0);
-  const smokesTobacco = plan.productType === "CIGARETTES" || plan.productType === "ROLL_YOUR_OWN";
+  const profile = profileForPlan(plan);
   return {
     currency: plan.currency,
     pricePerUnit,
@@ -77,6 +80,7 @@ export function computeMoney(state: QuitJourneyState, now: number): MoneyStats |
     moneySpentOnRewards,
     moneyAvailable: moneySaved - moneySpentOnRewards,
     projectedYearlySavings: plan.unitsPerDay * pricePerUnit * 365,
-    lifeRegainedMinutes: smokesTobacco ? unitsAvoided * LIFE_MINUTES_PER_CIGARETTE : null,
+    lifeRegainedMinutes: profile.lifeMinutesPerUnit === null ? null : unitsAvoided * profile.lifeMinutesPerUnit,
+    timeRegainedMinutes: profile.minutesPerUnit === null ? null : unitsAvoided * profile.minutesPerUnit,
   };
 }

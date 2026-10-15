@@ -88,7 +88,8 @@ export function InsightsTab({ state, snapshot }: TabProps) {
           {ins.weightChangeKg !== null && (
             <p>
               Weight {ins.weightChangeKg >= 0 ? "up" : "down"} {formatNumber(Math.abs(ins.weightChangeKg), 1)} kg since your first weigh-in.
-              {ins.weightChangeKg > 0 && " A few kilos is common and far less harmful than smoking; it usually levels off after three months."}
+              {ins.weightChangeKg > 0 && snapshot.profile.category === "NICOTINE" && " A few kilos is common and far less harmful than smoking; it usually levels off after three months."}
+              {ins.weightChangeKg > 0 && snapshot.profile.category !== "NICOTINE" && " Appetite often changes in early recovery; it tends to settle as routines do."}
             </p>
           )}
           {ins.frequentSymptoms.length > 0 && (

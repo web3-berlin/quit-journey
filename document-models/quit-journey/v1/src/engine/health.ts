@@ -9,7 +9,7 @@ export interface HealthMilestoneDef {
 }
 
 /**
- * Recovery timeline after the last cigarette, summarised from WHO, CDC,
+ * Nicotine (smoking) recovery timeline after the last cigarette, summarised from WHO, CDC,
  * American Cancer Society and NHS guidance. Times are typical, not guaranteed.
  */
 export const HEALTH_MILESTONES: HealthMilestoneDef[] = [
@@ -36,8 +36,12 @@ export interface HealthMilestoneStatus extends HealthMilestoneDef {
 }
 
 /** Milestones are measured from the latest of quit date and last slip. */
-export function computeHealth(recoveryStart: number | null, now: number): HealthMilestoneStatus[] {
-  return HEALTH_MILESTONES.map((m) => {
+export function computeHealth(
+  recoveryStart: number | null,
+  now: number,
+  milestones: HealthMilestoneDef[] = HEALTH_MILESTONES,
+): HealthMilestoneStatus[] {
+  return milestones.map((m) => {
     const elapsed = recoveryStart === null ? 0 : Math.max(0, now - recoveryStart);
     const reachedAt = recoveryStart === null ? 0 : recoveryStart + m.afterMs;
     return {

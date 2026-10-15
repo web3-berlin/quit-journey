@@ -49,7 +49,7 @@ export function RewardsTab({ state, snapshot, dispatch }: TabProps) {
                 </div>
                 <div style={{ margin: "8px 0" }}><Meter value={progress} tone="amber" label={`Progress towards ${r.title}`} /></div>
                 <div className="spread">
-                  <span className="muted">{progress >= 1 ? "You can afford it now." : daysLeft !== null ? `About ${daysLeft} more smoke-free days.` : ""}</span>
+                  <span className="muted">{progress >= 1 ? "You can afford it now." : daysLeft !== null ? `About ${daysLeft} more days on track.` : ""}</span>
                   <span className="row">
                     <button type="button" className="linkish" onClick={() => dispatch(actions.deleteRewardGoal({ id: r.id }))}>Remove</button>
                     <button type="button" className="btn small" disabled={progress < 1}

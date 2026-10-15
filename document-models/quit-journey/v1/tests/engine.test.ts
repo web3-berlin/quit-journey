@@ -44,6 +44,10 @@ function plan(quitAt: number, overrides: Partial<QuitPlan> = {}): QuitPlan {
     packPrice: 10,
     currency: "EUR",
     yearsSmoked: null,
+    customName: null,
+    unitLabel: null,
+    goal: null,
+    dailyLimit: null,
     ...overrides,
   };
 }

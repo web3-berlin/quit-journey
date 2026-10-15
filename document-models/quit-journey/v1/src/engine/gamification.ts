@@ -1,5 +1,6 @@
 import type { QuitJourneyState } from "document-models/quit-journey/v1";
 import type { MoneyStats, Period } from "./money.js";
+import type { ReductionStatus } from "./reduction.js";
 import { PREP_TASKS } from "./prep.js";
 import { DAY, HOUR, localDateKey, shiftDateKey } from "./time.js";
 
@@ -44,22 +45,22 @@ const count = (
 
 export const BADGES: BadgeDef[] = [
   time("first-day", "Day One", "🌅", DAY, "24 hours"),
-  time("three-days", "Nicotine Free", "🧪", 3 * DAY, "3 days"),
+  time("three-days", "Three Days Strong", "🧪", 3 * DAY, "3 days"),
   time("one-week", "Week Warrior", "🗓️", 7 * DAY, "1 week"),
   time("two-weeks", "Fortnight Force", "⚡", 14 * DAY, "2 weeks"),
   time("one-month", "Monthly Master", "🌙", 30 * DAY, "1 month"),
   time("three-months", "Quarter Champion", "🌳", 90 * DAY, "3 months"),
   time("six-months", "Half-Year Hero", "🦸", 182 * DAY, "6 months"),
-  time("one-year", "Smoke-Free Legend", "👑", 365 * DAY, "1 year"),
-  count("streak-72h", "Clean Streak", "🔥", "TIME", 72 * HOUR, "72 hours without a single slip", (c) => c.bestStreakMs),
+  time("one-year", "One-Year Legend", "👑", 365 * DAY, "1 year"),
+  count("streak-72h", "Steady Streak", "🔥", "TIME", 72 * HOUR, "72 hours without a single slip", (c) => c.bestStreakMs),
   count("money-10", "First Tenner", "🪙", "MONEY", 10, "Save 10 in your currency", (c) => c.moneySaved),
   count("money-100", "Piggy Bank", "🐷", "MONEY", 100, "Save 100 in your currency", (c) => c.moneySaved),
   count("money-500", "Treasure Chest", "💰", "MONEY", 500, "Save 500 in your currency", (c) => c.moneySaved),
   count("money-1000", "Four Figures", "💎", "MONEY", 1000, "Save 1,000 in your currency", (c) => c.moneySaved),
-  count("avoided-100", "Century", "💯", "AVOIDED", 100, "Don't smoke 100 cigarettes", (c) => c.unitsAvoided),
-  count("avoided-500", "Half a Thousand", "🚭", "AVOIDED", 500, "Don't smoke 500 cigarettes", (c) => c.unitsAvoided),
-  count("avoided-1000", "Thousand Breaths", "🌬️", "AVOIDED", 1000, "Don't smoke 1,000 cigarettes", (c) => c.unitsAvoided),
-  count("avoided-5000", "Fresh Air Titan", "🏔️", "AVOIDED", 5000, "Don't smoke 5,000 cigarettes", (c) => c.unitsAvoided),
+  count("avoided-100", "Century", "💯", "AVOIDED", 100, "Skip 100 {unit}", (c) => c.unitsAvoided),
+  count("avoided-500", "Half a Thousand", "🚭", "AVOIDED", 500, "Skip 500 {unit}", (c) => c.unitsAvoided),
+  count("avoided-1000", "Thousand Strong", "🌬️", "AVOIDED", 1000, "Skip 1,000 {unit}", (c) => c.unitsAvoided),
+  count("avoided-5000", "Unstoppable", "🏔️", "AVOIDED", 5000, "Skip 5,000 {unit}", (c) => c.unitsAvoided),
   count("resist-1", "First Victory", "🥊", "CRAVINGS", 1, "Resist your first craving", (c) => c.resisted),
   count("resist-10", "Craving Warrior", "⚔️", "CRAVINGS", 10, "Resist 10 cravings", (c) => c.resisted),
   count("resist-50", "Urge Surfer", "🏄", "CRAVINGS", 50, "Resist 50 cravings", (c) => c.resisted),
@@ -209,7 +210,10 @@ export function computeGamification(
   streaks: Streaks,
   money: MoneyStats | null,
   now: number,
+  options: { unit?: string; reduction?: ReductionStatus | null } = {},
 ): Gamification {
+  const unit = options.unit ?? "cigarettes";
+  const reduction = options.reduction ?? null;
   const quit = state.plan ? Date.parse(state.plan.quitDateTime) : null;
   const resistedCravings = state.cravings.filter((c) => c.outcome === "RESISTED");
   const firstSlip = state.slips.reduce<number | null>((min, s) => {
@@ -219,7 +223,8 @@ export function computeGamification(
 
   const ctx: BadgeContext = {
     currentElapsedMs: quit === null ? 0 : Math.max(0, now - quit),
-    bestStreakMs: streaks.bestStreakMs,
+    // With a reduction goal, a "streak" is consecutive days within the daily limit.
+    bestStreakMs: reduction ? reduction.bestStreakDays * DAY : streaks.bestStreakMs,
     moneySaved: money?.moneySaved ?? 0,
     unitsAvoided: money?.unitsAvoided ?? 0,
     resisted: resistedCravings.length,
@@ -240,7 +245,7 @@ export function computeGamification(
     return {
       key: b.key,
       title: b.title,
-      description: b.description,
+      description: b.description.replace("{unit}", unit),
       icon: b.icon,
       category: b.category,
       earned: value >= b.target,
@@ -250,7 +255,7 @@ export function computeGamification(
   const earned = badges.filter((b) => b.earned);
   const nextBadge = badges.filter((b) => !b.earned).sort((a, b) => b.progress - a.progress)[0] ?? null;
 
-  const smokeFreeDays = Math.floor(periods.reduce((s, p) => s + (p.end - p.start), 0) / DAY);
+  const smokeFreeDays = reduction ? reduction.daysWithinLimit : Math.floor(periods.reduce((s, p) => s + (p.end - p.start), 0) / DAY);
   const xp =
     smokeFreeDays * XP.perSmokeFreeDay +
     resistedCravings.reduce((s, c) => s + XP.perResistedCraving + (c.intensity >= 4 ? XP.intenseCravingBonus : 0), 0) +

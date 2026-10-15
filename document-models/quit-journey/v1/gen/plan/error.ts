@@ -1,5 +1,6 @@
 export type ErrorCode =
   | "InvalidQuitPlanError"
+  | "InvalidReductionGoalError"
   | "EmptyMotivationError"
   | "MotivationNotFoundError";
 
@@ -10,6 +11,13 @@ export interface ReducerError {
 export class InvalidQuitPlanError extends Error implements ReducerError {
   errorCode = "InvalidQuitPlanError" as ErrorCode;
   constructor(message = "InvalidQuitPlanError") {
+    super(message);
+  }
+}
+
+export class InvalidReductionGoalError extends Error implements ReducerError {
+  errorCode = "InvalidReductionGoalError" as ErrorCode;
+  constructor(message = "InvalidReductionGoalError") {
     super(message);
   }
 }
@@ -29,7 +37,7 @@ export class MotivationNotFoundError extends Error implements ReducerError {
 }
 
 export const errors = {
-  SetQuitPlan: { InvalidQuitPlanError },
+  SetQuitPlan: { InvalidQuitPlanError, InvalidReductionGoalError },
 
   AddMotivation: { EmptyMotivationError },
 

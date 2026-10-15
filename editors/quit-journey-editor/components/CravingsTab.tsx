@@ -22,7 +22,7 @@ export function CravingsTab({ state, snapshot, dispatch }: TabProps) {
         </div>
         <p className="soft">Most cravings pass within {insights.typicalCravingMinutes} minutes. Logging each one teaches the app what works for you.</p>
         {logging ? (
-          <div className="panel"><CravingLogForm dispatch={dispatch} now={snapshot.now} onDone={() => setLogging(false)} /></div>
+          <div className="panel"><CravingLogForm dispatch={dispatch} now={snapshot.now} profile={snapshot.profile} reducing={snapshot.reduction !== null} onDone={() => setLogging(false)} /></div>
         ) : (
           <button type="button" className="btn" onClick={() => setLogging(true)}>Log a craving</button>
         )}
@@ -37,7 +37,7 @@ export function CravingsTab({ state, snapshot, dispatch }: TabProps) {
             {cravings.map((c) => (
               <li key={c.id}>
                 <div>
-                  <strong>{c.outcome === "RESISTED" ? "Beaten" : "Smoked"}</strong>
+                  <strong>{c.outcome === "RESISTED" ? "Beaten" : "Used"}</strong>
                   <span className="soft"> — {TRIGGER_LABELS[c.trigger].toLowerCase()}, intensity {c.intensity}/5</span>
                   {c.strategy && <p className="muted">{STRATEGY_LABELS[c.strategy]}</p>}
                   {c.note && <p className="soft">{c.note}</p>}

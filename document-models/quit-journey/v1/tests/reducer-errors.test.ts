@@ -21,7 +21,7 @@ import {
   setQuitPlan,
 } from "document-models/quit-journey/v1";
 import { describe, expect, it } from "vitest";
-import { addDays, errs, planInput, QUIT, run, withPlan } from "./helpers.js";
+import { addDays, errs, planInput, QUIT, run, storedPlan, withPlan } from "./helpers.js";
 
 const INVALID_PLAN =
   "unitsPerDay and unitsPerPack must be positive and packPrice must not be negative";
@@ -40,7 +40,7 @@ describe("plan errors", () => {
       setQuitPlan(planInput({ packPrice: 0 })),
     ]);
     expect(errs(doc)).toEqual([INVALID_PLAN, INVALID_PLAN, INVALID_PLAN, null]);
-    expect(doc.state.global.plan).toEqual({ ...planInput({ packPrice: 0 }), yearsSmoked: null });
+    expect(doc.state.global.plan).toEqual(storedPlan({ packPrice: 0 }));
   });
 
   it("rejects empty motivations and unknown motivation ids", () => {

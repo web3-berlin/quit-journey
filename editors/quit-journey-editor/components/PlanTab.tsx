@@ -81,7 +81,7 @@ export function PlanTab({ state, snapshot, dispatch }: TabProps) {
 
       <section className="stack">
         <h3>Quit aids</h3>
-        <p className="soft">Nicotine replacement and stop-smoking medication roughly double your chances. Log each use to keep track of your dose.</p>
+        <p className="soft">Medication and support make a real difference: nicotine replacement, methadone or buprenorphine for opioids, naltrexone or acamprosate for alcohol, therapy and support groups for everything. Log each use or meeting to keep track.</p>
         <ul className="list">
           {activeAids.map((a) => {
             const uses = state.aidUses.filter((u) => u.aidId === a.id).length;
@@ -119,9 +119,9 @@ export function PlanTab({ state, snapshot, dispatch }: TabProps) {
           <Field label="Who are they?"><input value={contact.relation} onChange={(e) => setContact({ ...contact, relation: e.target.value })} placeholder="Sister, quit buddy…" /></Field>
         </div>
         <button type="button" className="btn ghost" disabled={!contact.name.trim()} onClick={addContact}>Add contact</button>
-        <Field label="Quitline phone number">
+        <Field label="Helpline phone number">
           <div className="row" style={{ flexWrap: "nowrap" }}>
-            <input type="tel" value={quitline} onChange={(e) => setQuitline(e.target.value)} placeholder="e.g. NHS 0300 123 1044, US 1-800-QUIT-NOW" />
+            <input type="tel" value={quitline} onChange={(e) => setQuitline(e.target.value)} placeholder="e.g. US SAMHSA 1-800-662-4357, UK Frank 0300 123 6600" />
             <button type="button" className="btn ghost" onClick={() => dispatch(actions.setQuitline({ phone: quitline.trim() || null }))}>Save</button>
           </div>
         </Field>
@@ -134,7 +134,7 @@ export function PlanTab({ state, snapshot, dispatch }: TabProps) {
           <ul className="list">
             {slips.map((s) => (
               <li key={s.id}>
-                <span>{s.units} smoked {s.trigger && <span className="soft">— {TRIGGER_LABELS[s.trigger].toLowerCase()}</span>}<br /><span className="muted">{formatDateTime(s.timestamp)}</span></span>
+                <span>{s.units} {snapshot.profile.unit} {s.trigger && <span className="soft">— {TRIGGER_LABELS[s.trigger].toLowerCase()}</span>}<br /><span className="muted">{formatDateTime(s.timestamp)}</span></span>
                 <button type="button" className="linkish" onClick={() => dispatch(actions.deleteSlip({ id: s.id }))}>Delete</button>
               </li>
             ))}
@@ -145,7 +145,7 @@ export function PlanTab({ state, snapshot, dispatch }: TabProps) {
       {state.plan && (
         <section className="panel tint-ember stack">
           <h3>Start over</h3>
-          <p>Back to smoking regularly? Most people need several attempts — each one teaches you something. Your past attempts and savings stay in your history.</p>
+          <p>Back to using regularly? Most people need several attempts — each one teaches you something. Your past attempts and savings stay in your history.</p>
           {state.pastAttempts.length > 0 && <p className="soft">Previous attempts: {state.pastAttempts.length}</p>}
           {confirmRestart ? (
             <div className="stack">
