@@ -9,11 +9,14 @@ import { QuitJourneyApp, type BackHandler } from "../../editors/quit-journey-edi
 import { useHost } from "./host.js";
 import { JourneySwitcher } from "./JourneySwitcher.js";
 import { LockScreen } from "./LockScreen.js";
+import { BootScreen } from "./BootScreen.js";
+import { LocaleListener, MobileIntlProvider } from "./MobileIntl.js";
 import { MobileSettings } from "./MobileSettings.js";
 import { ensureChannels, isNative, readSettings, syncNotifications, writeSettings, type NotifySettings } from "./notifications.js";
 import { pinEnabled } from "./privacy.js";
 import { isAndroid, QjNative } from "./native.js";
 import { useJourneys } from "./store.js";
+import { activeLocale, prepareTranslations } from "./translate.js";
 
 /** Ask for the PIN again after this long in the background. */
 const RELOCK_AFTER_MS = 60_000;
@@ -28,6 +31,8 @@ function App() {
   const lockedRef = useRef(locked);
   lockedRef.current = locked;
   const state = doc?.state.global;
+  // The UI language, reported from inside QuitJourneyApp; notifications and channel names follow it.
+  const [uiLocale, setUiLocale] = useState(activeLocale);
 
   // PIN lock on resume after more than a minute away; with a PIN, keep the app out of recent-apps previews.
   useEffect(() => {
@@ -53,7 +58,6 @@ function App() {
 
   useEffect(() => {
     if (!isNative()) return;
-    void ensureChannels();
     const subs = [
       CapApp.addListener("backButton", () => {
         if (lockedRef.current) return void CapApp.minimizeApp();
@@ -64,7 +68,12 @@ function App() {
     return () => subs.forEach((s) => void s.then((h) => h.remove()));
   }, [flush]);
 
-  // Reschedule notifications whenever any journey or the settings change, and when the app resumes.
+  // Load the catalog for text built outside React, and (re)name the notification channels in that language.
+  useEffect(() => {
+    void prepareTranslations().then(() => (isNative() ? ensureChannels() : undefined)).catch((e: unknown) => console.error(e));
+  }, [uiLocale]);
+
+  // Reschedule notifications whenever any journey, the settings or the language change, and when the app resumes.
   useEffect(() => {
     if (!docs) return;
     const id = window.setTimeout(() => void syncNotifications(docs, settings).catch((e: unknown) => console.error(e)), 1500);
@@ -73,15 +82,15 @@ function App() {
       window.clearTimeout(id);
       void resume?.then((h) => h.remove());
     };
-  }, [docs, settings]);
+  }, [docs, settings, uiLocale]);
 
   const updateSettings = useCallback((next: NotifySettings) => {
     writeSettings(next);
     setSettings(next);
   }, []);
 
-  const lock = locked ? <LockScreen onUnlock={() => setLocked(false)} /> : null;
-  if (!docs || !doc || !state || !activeId) return lock ?? <div className="boot" aria-busy="true" />;
+  const lock = locked ? <MobileIntlProvider><LockScreen onUnlock={() => setLocked(false)} /></MobileIntlProvider> : null;
+  if (!docs || !doc || !state || !activeId) return lock ?? <MobileIntlProvider><BootScreen /></MobileIntlProvider>;
 
   return (
     <>
@@ -98,7 +107,10 @@ function App() {
           registerBackHandler={registerBackHandler}
           toolbar={docs.length > 1 || state.plan ? <JourneySwitcher docs={docs} activeId={activeId} onSelect={setActiveId} onNew={startNew} /> : undefined}
           settings={
-            <MobileSettings doc={doc} journeyCount={docs.length} settings={settings} onSettings={updateSettings} onRestore={restore} onDelete={() => remove(activeId)} host={host} />
+            <>
+              <LocaleListener onLocale={setUiLocale} />
+              <MobileSettings doc={doc} journeyCount={docs.length} settings={settings} onSettings={updateSettings} onRestore={restore} onDelete={() => remove(activeId)} host={host} />
+            </>
           }
         />
       </div>

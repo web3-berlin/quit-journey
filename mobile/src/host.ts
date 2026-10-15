@@ -11,23 +11,27 @@ import type { HostCapabilities } from "../../editors/quit-journey-editor/lib/hos
 import { isAndroid, QjNative, type LaunchableApp } from "./native.js";
 import { isNative, requestPermission, safetyNotificationId, SAFETY_CHANNEL } from "./notifications.js";
 import { cachedDisguisedIcon, pinEnabled, readDisguisedIcon, setDisguisedIcon, setPin } from "./privacy.js";
+import { formatMessage, prepareTranslations } from "./translate.js";
 
 // ---- Safety alarms ----------------------------------------------------------
 
 async function scheduleSafetyAlarm(checkId: string, at: Date, contactName: string | null): Promise<{ exact: boolean }> {
-  if (!(await requestPermission())) throw new Error("Notifications are blocked for this app.");
+  await prepareTranslations();
+  if (!(await requestPermission())) throw new Error(formatMessage({ id: "mobile.host.notificationsBlocked", defaultMessage: "Notifications are blocked for this app." }));
   const id = safetyNotificationId(checkId);
   // Discreet wording when the icon is disguised: the alarm still rings, but doesn't name the app's purpose.
   const discreet = cachedDisguisedIcon();
   const body = discreet
-    ? "Time to check in."
+    ? formatMessage({ id: "notify.safety.discreetBody", defaultMessage: "Time to check in." })
     : contactName
-      ? `Your safety check is up. Open the app to say you're OK, or message ${contactName}.`
-      : "Your safety check is up. Open the app to say you're OK.";
+      ? formatMessage({ id: "notify.safety.bodyContact", defaultMessage: "Your safety check is up. Open the app to say you're OK, or message {name}." }, { name: contactName })
+      : formatMessage({ id: "notify.safety.body", defaultMessage: "Your safety check is up. Open the app to say you're OK." });
   const result = await LocalNotifications.schedule({
     notifications: [{
       id,
-      title: discreet ? "Reminder" : "Safety check",
+      title: discreet
+        ? formatMessage({ id: "notify.safety.discreetTitle", defaultMessage: "Reminder" })
+        : formatMessage({ id: "notify.safety.title", defaultMessage: "Safety check" }),
       body,
       channelId: SAFETY_CHANNEL,
       // Exact: an inexact alarm was measured arriving minutes late, which defeats an overdose safety timer.
@@ -90,15 +94,15 @@ async function shareText(title: string, text: string): Promise<void> {
 }
 
 async function fetchJson(url: string): Promise<unknown> {
-  if (!/^https:\/\//i.test(url)) throw new Error("Only https:// feeds are supported.");
+  if (!/^https:\/\//i.test(url)) throw new Error(formatMessage({ id: "mobile.meetings.httpsOnly", defaultMessage: "Only https:// feeds are supported." }));
   if (isNative()) {
     const res = await CapacitorHttp.get({ url, responseType: "json", headers: { Accept: "application/json" }, connectTimeout: 15_000, readTimeout: 30_000 });
-    if (res.status < 200 || res.status >= 300) throw new Error(`The feed answered ${res.status}.`);
+    if (res.status < 200 || res.status >= 300) throw new Error(formatMessage({ id: "mobile.meetings.httpStatus", defaultMessage: "The feed answered {status}." }, { status: String(res.status) }));
     const data: unknown = res.data;
     return typeof data === "string" ? (JSON.parse(data) as unknown) : data;
   }
   const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new Error(`The feed answered ${res.status}.`);
+  if (!res.ok) throw new Error(formatMessage({ id: "mobile.meetings.httpStatus", defaultMessage: "The feed answered {status}." }, { status: String(res.status) }));
   return (await res.json()) as unknown;
 }
 

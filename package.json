@@ -75,11 +75,15 @@
     "service": "ph-cli service",
     "vetra": "ph-cli vetra",
     "service-startup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-startup.sh",
-    "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh"
+    "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh",
+    "i18n:extract": "formatjs extract 'editors/**/*.{ts,tsx}' 'mobile/src/**/*.{ts,tsx}' --ignore '**/*.d.ts' --ignore '**/i18n/messages/**' --out-file editors/quit-journey-editor/i18n/source/ui.en.json --format simple && WRITE_I18N=1 vitest run editors/quit-journey-editor/i18n",
+    "i18n:check": "I18N_STRICT=1 vitest run editors/quit-journey-editor/i18n"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.15",
     "@electric-sql/pglite-tools": "0.2.20",
+    "@formatjs/cli": "6.16.32",
+    "@formatjs/icu-messageformat-parser": "3.5.20",
     "@powerhousedao/connect": "6.2.3-dev.56",
     "@powerhousedao/design-system": "6.2.3-dev.56",
     "@powerhousedao/document-engineering": "1.40.5",
@@ -123,5 +127,8 @@
     "**/date-fns": "4.3.0",
     "**/rolldown": "1.0.2",
     "**/vite": "8.0.14"
+  },
+  "dependencies": {
+    "react-intl": "12.1.3"
   }
 }

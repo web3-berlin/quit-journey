@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useIntl } from "react-intl";
 import type { HostCapabilities } from "../../editors/quit-journey-editor/lib/host.js";
 import { isAndroid } from "./native.js";
 import { isValidPin, verifyPin } from "./privacy.js";
@@ -8,6 +9,7 @@ type Mode = "idle" | "set" | "remove";
 
 /** PIN lock and disguised launcher icon. */
 export function PrivacySettings({ privacy }: { privacy: Privacy }) {
+  const intl = useIntl();
   const [mode, setMode] = useState<Mode>("idle");
   const [current, setCurrent] = useState("");
   const [pin, setPin] = useState("");
@@ -23,26 +25,28 @@ export function PrivacySettings({ privacy }: { privacy: Privacy }) {
   }
 
   async function save() {
-    if (privacy.pinEnabled && !(await verifyPin(current))) return setMessage({ text: "Your current PIN isn't right.", error: true });
+    if (privacy.pinEnabled && !(await verifyPin(current))) return setMessage({ text: intl.formatMessage({ id: "mobile.privacy.currentWrong", defaultMessage: "Your current PIN isn't right." }), error: true });
     if (mode === "remove") {
       await privacy.setPin(null);
       reset();
-      return setMessage({ text: "PIN removed.", error: false });
+      return setMessage({ text: intl.formatMessage({ id: "mobile.privacy.removed", defaultMessage: "PIN removed." }), error: false });
     }
-    if (!isValidPin(pin)) return setMessage({ text: "Use 4 to 8 digits.", error: true });
-    if (pin !== again) return setMessage({ text: "The two PINs don't match.", error: true });
+    if (!isValidPin(pin)) return setMessage({ text: intl.formatMessage({ id: "mobile.privacy.useDigits", defaultMessage: "Use 4 to 8 digits." }), error: true });
+    if (pin !== again) return setMessage({ text: intl.formatMessage({ id: "mobile.privacy.mismatch", defaultMessage: "The two PINs don't match." }), error: true });
     await privacy.setPin(pin);
     reset();
-    setMessage({ text: "PIN saved. The app asks for it on launch and after a minute away.", error: false });
+    setMessage({ text: intl.formatMessage({ id: "mobile.privacy.saved", defaultMessage: "PIN saved. The app asks for it on launch and after a minute away." }), error: false });
   }
 
   async function toggleIcon(on: boolean) {
     setIconBusy(true);
     try {
       await privacy.setDisguisedIcon(on);
-      setMessage({ text: on ? "When you leave the app, its home-screen icon changes to \"Notes\". Android closes the app once to apply it." : "When you leave the app, the Quit Journey icon comes back.", error: false });
+      setMessage({ text: on
+          ? intl.formatMessage({ id: "mobile.privacy.iconDisguised", defaultMessage: "When you leave the app, its home-screen icon changes to \"Notes\". Android closes the app once to apply it." })
+          : intl.formatMessage({ id: "mobile.privacy.iconRestored", defaultMessage: "When you leave the app, the Quit Journey icon comes back." }), error: false });
     } catch {
-      setMessage({ text: "Couldn't change the icon.", error: true });
+      setMessage({ text: intl.formatMessage({ id: "mobile.privacy.iconFailed", defaultMessage: "Couldn't change the icon." }), error: true });
     } finally {
       setIconBusy(false);
     }
@@ -56,29 +60,31 @@ export function PrivacySettings({ privacy }: { privacy: Privacy }) {
     </label>
   );
 
+  const turnOff = intl.formatMessage({ id: "mobile.privacy.turnOff", defaultMessage: "Turn PIN off" });
+
   return (
     <section className="stack">
-      <h3>Privacy</h3>
-      <p className="soft">Keep your journey to yourself on a shared or borrowed phone.</p>
+      <h3>{intl.formatMessage({ id: "mobile.privacy.heading", defaultMessage: "Privacy" })}</h3>
+      <p className="soft">{intl.formatMessage({ id: "mobile.privacy.intro", defaultMessage: "Keep your journey to yourself on a shared or borrowed phone." })}</p>
 
-      <p>{privacy.pinEnabled ? "App PIN is on." : "App PIN is off."}</p>
+      <p>{privacy.pinEnabled ? intl.formatMessage({ id: "mobile.privacy.pinOn", defaultMessage: "App PIN is on." }) : intl.formatMessage({ id: "mobile.privacy.pinOff", defaultMessage: "App PIN is off." })}</p>
       {mode === "idle" ? (
         <div className="row">
-          <button type="button" className="btn ghost" onClick={() => { setMessage(null); reset("set"); }}>{privacy.pinEnabled ? "Change PIN" : "Set a PIN"}</button>
-          {privacy.pinEnabled && <button type="button" className="btn ghost" onClick={() => { setMessage(null); reset("remove"); }}>Turn PIN off</button>}
+          <button type="button" className="btn ghost" onClick={() => { setMessage(null); reset("set"); }}>{privacy.pinEnabled ? intl.formatMessage({ id: "mobile.privacy.change", defaultMessage: "Change PIN" }) : intl.formatMessage({ id: "mobile.privacy.set", defaultMessage: "Set a PIN" })}</button>
+          {privacy.pinEnabled && <button type="button" className="btn ghost" onClick={() => { setMessage(null); reset("remove"); }}>{turnOff}</button>}
         </div>
       ) : (
         <form className="panel stack" onSubmit={(e) => { e.preventDefault(); void save(); }}>
-          {privacy.pinEnabled && pinInput("Current PIN", current, setCurrent)}
+          {privacy.pinEnabled && pinInput(intl.formatMessage({ id: "mobile.privacy.currentPin", defaultMessage: "Current PIN" }), current, setCurrent)}
           {mode === "set" && (
             <>
-              {pinInput("New PIN (4–8 digits)", pin, setPin)}
-              {pinInput("New PIN again", again, setAgain)}
+              {pinInput(intl.formatMessage({ id: "mobile.privacy.newPin", defaultMessage: "New PIN (4–8 digits)" }), pin, setPin)}
+              {pinInput(intl.formatMessage({ id: "mobile.privacy.newPinAgain", defaultMessage: "New PIN again" }), again, setAgain)}
             </>
           )}
           <div className="row">
-            <button type="submit" className="btn">{mode === "remove" ? "Turn PIN off" : "Save PIN"}</button>
-            <button type="button" className="btn ghost" onClick={() => reset()}>Cancel</button>
+            <button type="submit" className="btn">{mode === "remove" ? turnOff : intl.formatMessage({ id: "mobile.privacy.save", defaultMessage: "Save PIN" })}</button>
+            <button type="button" className="btn ghost" onClick={() => reset()}>{intl.formatMessage({ id: "mobile.common.cancel", defaultMessage: "Cancel" })}</button>
           </div>
         </form>
       )}
@@ -86,7 +92,7 @@ export function PrivacySettings({ privacy }: { privacy: Privacy }) {
       {isAndroid() && (
         <label className="row" style={{ cursor: "pointer" }}>
           <input type="checkbox" style={{ width: 22, height: 22 }} checked={privacy.disguisedIcon} disabled={iconBusy} onChange={(e) => void toggleIcon(e.target.checked)} />
-          <span>Disguise the app icon as "Notes"</span>
+          <span>{intl.formatMessage({ id: "mobile.privacy.disguise", defaultMessage: "Disguise the app icon as \"Notes\"" })}</span>
         </label>
       )}
       {message && <p className={message.error ? "error" : "soft"} role="status">{message.text}</p>}

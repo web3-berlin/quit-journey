@@ -21,6 +21,7 @@ export const styles = `
   --ember-pale: #fbe3df;
   --line: #cfdde4;
   --display: "Bricolage Grotesque", "Bricolage Grotesque Variable", "Avenir Next", system-ui, sans-serif;
+  /* Latin display/body faces; other scripts fall through to the system's fonts for that script. */
   --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   background: var(--air);
   color: var(--ink);
@@ -118,14 +119,14 @@ export const styles = `
 /* Health timeline: a real sequence, so it gets a vertical path */
 .qj .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
 .qj .timeline li { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 0 0 22px; position: relative; }
-.qj .timeline li::before { content: ""; position: absolute; left: 25px; top: 52px; bottom: 0; width: 2px; background: var(--line); }
+.qj .timeline li::before { content: ""; position: absolute; inset-inline-start: 25px; top: 52px; bottom: 0; width: 2px; background: var(--line); }
 .qj .timeline li:last-child::before { display: none; }
 .qj .timeline li.done::before { background: var(--leaf); }
 .qj .timeline .when { font-size: .9rem; color: var(--ink-mute); }
 
 /* Badges */
 .qj .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-.qj .badge { padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line); text-align: left; }
+.qj .badge { padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line); text-align: start; }
 .qj .badge .icon { font-size: 1.9rem; line-height: 1; }
 .qj .badge.locked .icon { filter: grayscale(1); opacity: .45; }
 .qj .badge.earned { background: var(--amber-pale); border-color: transparent; }
@@ -144,11 +145,11 @@ export const styles = `
 .qj .bars > div > i { display: block; background: var(--leaf); border-radius: 4px 4px 0 0; min-height: 2px; }
 .qj .bars > div:hover > i { background: var(--leaf-deep); }
 .qj .hbar { display: grid; grid-template-columns: minmax(110px, 38%) 1fr 48px; gap: 10px; align-items: center; }
-.qj .hbar .track { height: 12px; background: var(--air-deep); border-radius: 0 4px 4px 0; }
-.qj .hbar .track > i { display: block; height: 100%; background: var(--leaf); border-radius: 0 4px 4px 0; }
+.qj .hbar .track { height: 12px; background: var(--air-deep); border-start-end-radius: 4px; border-end-end-radius: 4px; }
+.qj .hbar .track > i { display: block; height: 100%; background: var(--leaf); border-start-end-radius: 4px; border-end-end-radius: 4px; }
 
 /* SOS */
-.qj .sos-fab { position: fixed; right: 20px; bottom: 24px; z-index: 40; width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer; background: var(--ember); color: #fff; font: 800 1.1rem var(--display); box-shadow: 0 8px 24px rgba(217,72,59,.35); }
+.qj .sos-fab { position: fixed; inset-inline-end: 20px; bottom: 24px; z-index: 40; width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer; background: var(--ember); color: #fff; font: 800 1.1rem var(--display); box-shadow: 0 8px 24px rgba(217,72,59,.35); }
 .qj .sos-fab:hover { background: #b83a2f; }
 .qj .sos { position: fixed; inset: 0; z-index: 50; background: rgba(20,55,47,.55); display: flex; align-items: flex-end; justify-content: center; }
 .qj .sos .sheet { width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; background: var(--paper); border-radius: 26px 26px 0 0; padding: 24px 20px 32px; }

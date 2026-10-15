@@ -1,5 +1,6 @@
 import { plansForTrigger, placesNear, type RiskyPlace } from "document-models/quit-journey";
 import { useEffect, useMemo, useState } from "react";
+import { useIntl } from "react-intl";
 import type { TabProps } from "../lib/types.js";
 import { PlanCard } from "./toolkit/IfThenPlans.js";
 
@@ -7,6 +8,7 @@ const CHECK_EVERY_MS = 3 * 60_000;
 
 /** While the app is open, checks the position every few minutes and shows the plan for a nearby risky place. */
 export function RiskyPlaceBanner({ state, local, host }: TabProps) {
+  const intl = useIntl();
   const [near, setNear] = useState<RiskyPlace | null>(null);
   const [dismissed, setDismissed] = useState<string | null>(null);
   const places = useMemo(() => local.riskyPlaces ?? [], [local.riskyPlaces]);
@@ -33,9 +35,9 @@ export function RiskyPlaceBanner({ state, local, host }: TabProps) {
 
   return (
     <section className="panel tint-amber stack" role="alert" style={{ marginTop: 16 }}>
-      <h3>You're near {near.label}</h3>
-      {plan ? <PlanCard plan={plan} /> : <p>This is one of your risky places. Keep moving, call someone, or open SOS.</p>}
-      <button type="button" className="linkish" onClick={() => setDismissed(near.id)}>Got it</button>
+      <h3>{intl.formatMessage({ id: "safety.riskyPlace.near", defaultMessage: "You're near {place}" }, { place: near.label })}</h3>
+      {plan ? <PlanCard plan={plan} /> : <p>{intl.formatMessage({ id: "safety.riskyPlace.noPlan", defaultMessage: "This is one of your risky places. Keep moving, call someone, or open SOS." })}</p>}
+      <button type="button" className="linkish" onClick={() => setDismissed(near.id)}>{intl.formatMessage({ id: "common.gotIt", defaultMessage: "Got it" })}</button>
     </section>
   );
 }

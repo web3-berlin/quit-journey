@@ -2,6 +2,7 @@ import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
 import { isQuitJourneyDocument, type QuitJourneyDocument } from "./core.js";
 import { isNative } from "./notifications.js";
+import { formatMessage } from "./translate.js";
 
 /** Shares the full document (state and operation history) as a JSON backup file. */
 export async function exportBackup(doc: QuitJourneyDocument) {
@@ -11,7 +12,7 @@ export async function exportBackup(doc: QuitJourneyDocument) {
   if (isNative()) {
     await Filesystem.writeFile({ path: name, data: json, directory: Directory.Cache, encoding: Encoding.UTF8 });
     const { uri } = await Filesystem.getUri({ path: name, directory: Directory.Cache });
-    await Share.share({ title: "Quit Journey backup", files: [uri] });
+    await Share.share({ title: formatMessage({ id: "mobile.backup.shareTitle", defaultMessage: "Quit Journey backup" }), files: [uri] });
     return;
   }
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
@@ -29,10 +30,10 @@ export async function readBackup(file: File): Promise<QuitJourneyDocument> {
   try {
     parsed = JSON.parse(await file.text());
   } catch {
-    throw new InvalidBackupError("That file isn't a Quit Journey backup (it isn't valid JSON).");
+    throw new InvalidBackupError(formatMessage({ id: "mobile.backup.notJson", defaultMessage: "That file isn't a Quit Journey backup (it isn't valid JSON)." }));
   }
   if (!isQuitJourneyDocument(parsed)) {
-    throw new InvalidBackupError("That file isn't a Quit Journey backup.");
+    throw new InvalidBackupError(formatMessage({ id: "mobile.backup.notBackup", defaultMessage: "That file isn't a Quit Journey backup." }));
   }
   return parsed;
 }

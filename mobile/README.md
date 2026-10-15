@@ -21,6 +21,8 @@ It runs the real document-model reducer locally and stores each journey (one per
 
 Mobile-only settings (Privacy, Screen time, Meetings) live in `src/MobileSettings.tsx` and its section components.
 
+Text follows the shared UI's language (see `editors/quit-journey-editor/i18n/README.md`; ids `mobile.*` and `notify.*`). Screens outside `QuitJourneyApp` (lock and boot screens) are wrapped in `MobileIntlProvider` in `main.tsx`; notifications, channel names and thrown errors use `formatMessage`/`tc` from `src/translate.ts`, which reads the same `qj-locale` choice.
+
 ## Everyday commands
 
 ```bash

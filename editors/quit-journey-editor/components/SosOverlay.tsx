@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { formatMoney, pad2 } from "../lib/format.js";
-import { STRATEGY_LABELS } from "../lib/labels.js";
+import { useIntl, type IntlShape } from "react-intl";
+import { formatMoney, inSentence, pad2 } from "../lib/format.js";
+import { useLabels } from "../lib/labels.js";
 import type { TabProps } from "../lib/types.js";
 import { plansForTrigger } from "document-models/quit-journey";
 import { CravingLogForm } from "./CravingLogForm.js";
@@ -11,14 +12,24 @@ import { SafetyNotes } from "./SafetyNotes.js";
 
 /** 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s. */
 const PHASES = [
-  { name: "Breathe in", seconds: 4, scale: 1.25 },
-  { name: "Hold", seconds: 7, scale: 1.25 },
-  { name: "Breathe out", seconds: 8, scale: 0.85 },
+  { key: "in", seconds: 4, scale: 1.25 },
+  { key: "hold", seconds: 7, scale: 1.25 },
+  { key: "out", seconds: 8, scale: 0.85 },
 ] as const;
 const CYCLE = PHASES.reduce((s, p) => s + p.seconds, 0);
 
+function phaseName(intl: IntlShape, key: (typeof PHASES)[number]["key"]): string {
+  switch (key) {
+    case "in": return intl.formatMessage({ id: "sos.phase.in", defaultMessage: "Breathe in" });
+    case "hold": return intl.formatMessage({ id: "sos.phase.hold", defaultMessage: "Hold" });
+    case "out": return intl.formatMessage({ id: "sos.phase.out", defaultMessage: "Breathe out" });
+  }
+}
+
 export function SosOverlay(props: TabProps & { onClose: () => void }) {
   const { state, snapshot, dispatch, onClose } = props;
+  const intl = useIntl();
+  const L = useLabels();
   const [mode, setMode] = useState<"breathe" | "surf" | "safety">("breathe");
   const [startedAt] = useState(() => Date.now());
   const [tick, setTick] = useState(() => Date.now());
@@ -50,50 +61,68 @@ export function SosOverlay(props: TabProps & { onClose: () => void }) {
   const offerSafety = snapshot.profile.overdoseRiskAfterBreak || snapshot.profile.key === "STIMULANTS" || snapshot.profile.key === "KRATOM";
 
   return (
-    <div className="sos" role="dialog" aria-modal="true" aria-label="Craving SOS">
+    <div className="sos" role="dialog" aria-modal="true" aria-label={intl.formatMessage({ id: "sos.dialogLabel", defaultMessage: "Craving SOS" })}>
       <div className="sheet stack">
         <div className="spread">
-          <h2>Ride it out</h2>
-          <button type="button" className="linkish" onClick={onClose}>Close</button>
+          <h2>{intl.formatMessage({ id: "sos.heading", defaultMessage: "Ride it out" })}</h2>
+          <button type="button" className="linkish" onClick={onClose}>{intl.formatMessage({ id: "common.close", defaultMessage: "Close" })}</button>
         </div>
         {mode === "surf" && !logging ? (
           <UrgeSurfing dispatch={dispatch} onDone={onClose} />
         ) : mode === "safety" && !logging ? (
           <>
             <SafetyTimer {...props} />
-            <button type="button" className="linkish" onClick={() => setMode("breathe")}>Back to breathing</button>
+            <button type="button" className="linkish" onClick={() => setMode("breathe")}>{intl.formatMessage({ id: "sos.backToBreathing", defaultMessage: "Back to breathing" })}</button>
           </>
         ) : logging ? (
           <CravingLogForm dispatch={dispatch} now={Date.now()} profile={snapshot.profile} reducing={snapshot.reduction !== null} plans={state.ifThenPlans ?? []} initialStrategy="BREATHING" initialDurationMinutes={Math.max(1, Math.round(elapsed / 60))} onDone={onClose} />
         ) : (
           <>
             <div className="breath-stage"><div className="breath" style={{ transform: `scale(${phase.scale})`, transitionDuration: `${phase.seconds}s` }} aria-live="polite">
-              {phase.name}
+              {phaseName(intl, phase.key)}
               <br />
-              <span className="muted" style={{ fontSize: ".9rem" }}>{phase.seconds - t}s</span>
+              <span className="muted" style={{ fontSize: ".9rem" }}>{intl.formatMessage({ id: "sos.phase.secondsLeft", defaultMessage: "{seconds}s" }, { seconds: phase.seconds - t })}</span>
             </div></div>
             <p style={{ textAlign: "center", fontFamily: "var(--display)", fontSize: "1.4rem", fontWeight: 600 }}>
-              {left > 0 ? `${Math.floor(left / 60)}:${pad2(left % 60)} — it's already fading` : "You made it through. That's a win."}
+              {left > 0
+                ? intl.formatMessage({ id: "sos.countdown", defaultMessage: "{time} — it's already fading" }, { time: `${Math.floor(left / 60)}:${pad2(left % 60)}` })
+                : intl.formatMessage({ id: "sos.madeIt", defaultMessage: "You made it through. That's a win." })}
             </p>
-            {plan && <div className="panel tint-amber"><p className="soft">Your plan:</p><PlanCard plan={plan} /></div>}
-            {why && <blockquote className="panel tint-leaf" style={{ margin: 0 }}><p className="soft">Remember why:</p><p style={{ fontSize: "1.15rem" }}>{why.text}</p></blockquote>}
-            {best && <p>Your best move so far: <strong>{STRATEGY_LABELS[best].toLowerCase()}</strong>.</p>}
+            {plan && <div className="panel tint-amber"><p className="soft">{intl.formatMessage({ id: "sos.yourPlan", defaultMessage: "Your plan:" })}</p><PlanCard plan={plan} /></div>}
+            {why && <blockquote className="panel tint-leaf" style={{ margin: 0 }}><p className="soft">{intl.formatMessage({ id: "sos.rememberWhy", defaultMessage: "Remember why:" })}</p><p style={{ fontSize: "1.15rem" }}>{why.text}</p></blockquote>}
+            {best && (
+              <p>
+                {intl.formatMessage(
+                  { id: "sos.bestMove", defaultMessage: "Your best move so far: <b>{strategy}</b>." },
+                  { strategy: inSentence(L.label("strategy", best), intl.locale), b: (c) => <strong>{c}</strong> },
+                )}
+              </p>
+            )}
             {money && money.moneySaved > 0 && (
-              <p className="soft">You've kept {formatMoney(money.moneySaved, money.currency)} so far. Don't hand it back.</p>
+              <p className="soft">
+                {intl.formatMessage(
+                  { id: "sos.moneyKept", defaultMessage: "You've kept {amount} so far. Don't hand it back." },
+                  { amount: formatMoney(money.moneySaved, money.currency) },
+                )}
+              </p>
             )}
             {(state.supportContacts.length > 0 || state.quitlinePhone) && (
               <div className="row">
                 {state.supportContacts.filter((c) => c.phone).map((c) => (
-                  <a key={c.id} className="btn ghost small" href={`tel:${c.phone}`}>Call {c.name}</a>
+                  <a key={c.id} className="btn ghost small" href={`tel:${c.phone}`}>{intl.formatMessage({ id: "sos.callContact", defaultMessage: "Call {name}" }, { name: c.name })}</a>
                 ))}
-                {state.quitlinePhone && <a className="btn ghost small" href={`tel:${state.quitlinePhone}`}>Call the helpline</a>}
+                {state.quitlinePhone && <a className="btn ghost small" href={`tel:${state.quitlinePhone}`}>{intl.formatMessage({ id: "sos.callHelpline", defaultMessage: "Call the helpline" })}</a>}
               </div>
             )}
             {snapshot.profile.overdoseRiskAfterBreak && <SafetyNotes notes={snapshot.profile.safety.slice(0, 2)} />}
             <div className="row">
-              <button type="button" className="btn" onClick={() => setLogging(true)}>{left > 0 ? "Log this craving" : "Log my win"}</button>
-              <button type="button" className="btn ghost" onClick={() => setMode("surf")}>Try urge surfing</button>
-              {offerSafety && <button type="button" className="btn ghost" onClick={() => setMode("safety")}>Check on me</button>}
+              <button type="button" className="btn" onClick={() => setLogging(true)}>
+                {left > 0
+                  ? intl.formatMessage({ id: "sos.logCraving", defaultMessage: "Log this craving" })
+                  : intl.formatMessage({ id: "sos.logWin", defaultMessage: "Log my win" })}
+              </button>
+              <button type="button" className="btn ghost" onClick={() => setMode("surf")}>{intl.formatMessage({ id: "sos.tryUrgeSurfing", defaultMessage: "Try urge surfing" })}</button>
+              {offerSafety && <button type="button" className="btn ghost" onClick={() => setMode("safety")}>{intl.formatMessage({ id: "sos.checkOnMe", defaultMessage: "Check on me" })}</button>}
             </div>
           </>
         )}

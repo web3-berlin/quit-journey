@@ -13,3 +13,6 @@ projects-import.js
 *.keystore
 keystore.properties
 play-service-account*.json
+
+# i18n translation scratch chunks (merged into i18n/messages)
+editors/quit-journey-editor/i18n/work/

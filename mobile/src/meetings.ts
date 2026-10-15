@@ -2,6 +2,7 @@
  * Meeting Guide / code4recovery JSON feeds (https://github.com/code4recovery/spec).
  * The feed URL, a cached copy and the user's favourites live only in this phone's storage.
  */
+import { formatMessage } from "./translate.js";
 
 export interface Meeting {
   key: string;
@@ -16,8 +17,6 @@ export interface Meeting {
   types: string[];
   notes: string | null;
 }
-
-export const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const FEED_KEY = "qj-meeting-feed";
 const CACHE_KEY = "qj-meeting-cache";
@@ -38,7 +37,7 @@ function day(v: unknown): number | null {
 
 /** Parses a feed defensively; entries without a name are dropped. */
 export function parseMeetings(data: unknown): Meeting[] {
-  if (!Array.isArray(data)) throw new Error("That doesn't look like a meeting feed (expected a JSON list).");
+  if (!Array.isArray(data)) throw new Error(formatMessage({ id: "mobile.meetings.notAFeed", defaultMessage: "That doesn't look like a meeting feed (expected a JSON list)." }));
   const out: Meeting[] = [];
   for (const raw of data.slice(0, MAX_MEETINGS) as unknown[]) {
     if (!raw || typeof raw !== "object") continue;

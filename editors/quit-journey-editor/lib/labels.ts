@@ -12,6 +12,7 @@ import type {
   QuitAidType,
   WithdrawalSymptom,
 } from "document-models/quit-journey";
+import { useIntl } from "react-intl";
 
 export const PRODUCT_LABELS: Record<ProductType, string> = {
   CIGARETTES: "Cigarettes",
@@ -123,11 +124,7 @@ export const SYMPTOM_LABELS: Record<WithdrawalSymptom, string> = {
   DIARRHEA: "Diarrhea",
 };
 
-export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export function entries<K extends string>(labels: Record<K, string>): [K, string][] {
-  return Object.entries(labels) as [K, string][];
-}
 
 export const NALOXONE_LABELS: Record<NaloxoneKind, string> = {
   NASAL_SPRAY_4MG: "Nasal spray 4 mg",
@@ -188,3 +185,36 @@ export const MED_SOURCE_LABELS: Record<MedicationPlanSource, string> = {
   LEAFLET: "From the package leaflet",
   SELF: "My own notes",
 };
+
+/** English label maps by group; the source for `enum.<group>.<KEY>` messages. */
+export const LABEL_GROUPS = {
+  product: PRODUCT_LABELS,
+  trigger: TRIGGER_LABELS,
+  strategy: STRATEGY_LABELS,
+  aid: AID_LABELS,
+  symptom: SYMPTOM_LABELS,
+  naloxone: NALOXONE_LABELS,
+  drugTest: DRUG_TEST_LABELS,
+  drugResult: DRUG_RESULT_LABELS,
+  harmAction: HARM_ACTION_LABELS,
+  beverage: BEVERAGE_LABELS,
+  exclusion: EXCLUSION_LABELS,
+  medSource: MED_SOURCE_LABELS,
+} as const;
+
+export type LabelGroup = keyof typeof LABEL_GROUPS;
+type KeyOf<G extends LabelGroup> = keyof (typeof LABEL_GROUPS)[G] & string;
+
+export const enumId = (group: LabelGroup, key: string) => `enum.${group}.${key}`;
+
+/** Translated enum labels: `label("trigger", "STRESS")`, `options("trigger")` for pickers. */
+export function useLabels() {
+  const intl = useIntl();
+  const label = <G extends LabelGroup>(group: G, key: KeyOf<G>): string => {
+    const m = intl.messages[enumId(group, key)];
+    return typeof m === "string" && m.length > 0 ? m : (LABEL_GROUPS[group] as Record<string, string>)[key];
+  };
+  const options = <G extends LabelGroup>(group: G): [KeyOf<G>, string][] =>
+    (Object.keys(LABEL_GROUPS[group]) as KeyOf<G>[]).map((k) => [k, label(group, k)]);
+  return { label, options };
+}

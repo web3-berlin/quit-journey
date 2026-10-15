@@ -1,10 +1,12 @@
 import { App as CapApp } from "@capacitor/app";
 import { useCallback, useEffect, useState } from "react";
+import { useIntl } from "react-intl";
 import { hasUsageAccess, listLaunchableApps, readScreenTimeApps, writeScreenTimeApps } from "./host.js";
 import type { LaunchableApp } from "./native.js";
 
 /** Grant usage access and choose which apps count towards screen time. */
 export function ScreenTimeSettings({ screenTimeToday, requestUsageAccess }: { screenTimeToday: () => Promise<number | null>; requestUsageAccess: () => Promise<void> }) {
+  const intl = useIntl();
   const [granted, setGranted] = useState<boolean | null>(null);
   const [apps, setApps] = useState<LaunchableApp[] | null>(null);
   const [chosen, setChosen] = useState<Set<string>>(() => new Set(readScreenTimeApps()));
@@ -39,28 +41,37 @@ export function ScreenTimeSettings({ screenTimeToday, requestUsageAccess }: { sc
 
   return (
     <section className="stack">
-      <h3>Screen time</h3>
-      <p className="soft">For gaming or social-media journeys: count today's minutes in the apps you pick. Android needs "usage access" for this; the numbers never leave your phone.</p>
+      <h3>{intl.formatMessage({ id: "mobile.screenTime.heading", defaultMessage: "Screen time" })}</h3>
+      <p className="soft">
+        {intl.formatMessage({ id: "mobile.screenTime.intro", defaultMessage: "For gaming or social-media journeys: count today's minutes in the apps you pick. Android needs \"usage access\" for this; the numbers never leave your phone." })}
+      </p>
       {granted === false && (
-        <button type="button" className="btn ghost" onClick={() => void requestUsageAccess()}>Allow usage access</button>
+        <button type="button" className="btn ghost" onClick={() => void requestUsageAccess()}>{intl.formatMessage({ id: "mobile.screenTime.allow", defaultMessage: "Allow usage access" })}</button>
       )}
       {granted && (
         <>
-          <p>{chosen.size === 0 ? "No apps chosen yet." : `${chosen.size} app${chosen.size === 1 ? "" : "s"} counted · ${minutes ?? 0} min today`}</p>
+          <p>
+            {chosen.size === 0
+              ? intl.formatMessage({ id: "mobile.screenTime.noneChosen", defaultMessage: "No apps chosen yet." })
+              : intl.formatMessage(
+                { id: "mobile.screenTime.summary", defaultMessage: "{count, plural, one {# app counted} other {# apps counted}} · {minutes, plural, one {# min today} other {# min today}}" },
+                { count: chosen.size, minutes: minutes ?? 0 },
+              )}
+          </p>
           {picking ? (
             <>
-              <div className="pick-list" role="group" aria-label="Apps that count">
-                {apps === null ? <p className="muted">Loading apps…</p> : apps.map((a) => (
+              <div className="pick-list" role="group" aria-label={intl.formatMessage({ id: "mobile.screenTime.appsLabel", defaultMessage: "Apps that count" })}>
+                {apps === null ? <p className="muted">{intl.formatMessage({ id: "mobile.screenTime.loadingApps", defaultMessage: "Loading apps…" })}</p> : apps.map((a) => (
                   <label key={a.packageName}>
                     <input type="checkbox" checked={chosen.has(a.packageName)} onChange={(e) => toggle(a.packageName, e.target.checked)} />
                     <span>{a.label}</span>
                   </label>
                 ))}
               </div>
-              <button type="button" className="btn ghost" onClick={() => setPicking(false)}>Done</button>
+              <button type="button" className="btn ghost" onClick={() => setPicking(false)}>{intl.formatMessage({ id: "mobile.screenTime.done", defaultMessage: "Done" })}</button>
             </>
           ) : (
-            <button type="button" className="btn ghost" onClick={() => void openPicker()}>Choose apps</button>
+            <button type="button" className="btn ghost" onClick={() => void openPicker()}>{intl.formatMessage({ id: "mobile.screenTime.choose", defaultMessage: "Choose apps" })}</button>
           )}
         </>
       )}

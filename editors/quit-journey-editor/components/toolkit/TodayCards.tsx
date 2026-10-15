@@ -1,5 +1,7 @@
 import { generateId } from "document-model";
 import { actions, assessmentFor } from "document-models/quit-journey";
+import { useIntl } from "react-intl";
+import { cid, useContent } from "../../i18n/content.js";
 import type { TabProps } from "../../lib/types.js";
 import { SafetyTimer } from "../SafetyTimer.js";
 import { Meter } from "../ui.js";
@@ -8,6 +10,8 @@ import { ProgramMissions } from "./Programs.js";
 /** Toolkit highlights for the Today tab: only what needs attention now. */
 export function TodayCards(props: TabProps) {
   const { state, local, snapshot, dispatch } = props;
+  const intl = useIntl();
+  const { tc } = useContent();
   const { toolkit, profile } = snapshot;
   const activeCheck = (local.safetyChecks ?? []).some((c) => c.outcome === "ACTIVE");
   const kitWarnings = toolkit.naloxone.filter((k) => k.state !== "OK");
@@ -22,15 +26,34 @@ export function TodayCards(props: TabProps) {
 
       {redFlags.map((r) => (
         <section key={r.instrument} className="panel tint-ember stack" role="alert">
-          <h3>⚠️ Severe symptoms on your last {assessmentFor(r.instrument).name}</h3>
-          <p>Please contact your doctor or prescriber today. If you have a seizure, confusion, hallucinations or chest pain, call emergency services now.</p>
+          <h3>
+            {intl.formatMessage(
+              { id: "toolkit.today.redFlag.heading", defaultMessage: "⚠️ Severe symptoms on your last {assessment}" },
+              { assessment: tc(cid.assessment(r.instrument, "name"), assessmentFor(r.instrument).name) },
+            )}
+          </h3>
+          <p>{intl.formatMessage({ id: "toolkit.today.redFlag.body", defaultMessage: "Please contact your doctor or prescriber today. If you have a seizure, confusion, hallucinations or chest pain, call emergency services now." })}</p>
         </section>
       ))}
 
       {(kitWarnings.length > 0 || endingExclusions.length > 0) && (
         <section className="panel tint-amber stack">
-          {kitWarnings.length > 0 && <p>🩹 {kitWarnings.length === 1 ? "A naloxone kit needs" : `${kitWarnings.length} naloxone kits need`} replacing or renewing soon — see Toolkit.</p>}
-          {endingExclusions.map((x) => <p key={x.exclusionId}>🛡️ A gambling block ends in {x.daysLeft} days. Renew it before it lapses.</p>)}
+          {kitWarnings.length > 0 && (
+            <p>
+              {intl.formatMessage(
+                { id: "toolkit.today.naloxoneWarning", defaultMessage: "🩹 {count, plural, one {A naloxone kit needs} other {# naloxone kits need}} replacing or renewing soon — see Toolkit." },
+                { count: kitWarnings.length },
+              )}
+            </p>
+          )}
+          {endingExclusions.map((x) => (
+            <p key={x.exclusionId}>
+              {intl.formatMessage(
+                { id: "toolkit.today.exclusionEnding", defaultMessage: "🛡️ A gambling block ends in {days, plural, one {# day} other {# days}}. Renew it before it lapses." },
+                { days: x.daysLeft },
+              )}
+            </p>
+          ))}
         </section>
       )}
 
@@ -39,10 +62,20 @@ export function TodayCards(props: TabProps) {
         if (!aid) return null;
         return (
           <section key={m.aidId} className="panel stack">
-            <div className="spread"><h3>Today's dose</h3><span className="muted">day {m.day}</span></div>
-            <p><strong>{m.dose}</strong>, {m.timesPerDay}× a day — {m.takenToday} of {m.timesPerDay} logged.</p>
+            <div className="spread">
+              <h3>{intl.formatMessage({ id: "toolkit.today.dose.heading", defaultMessage: "Today's dose" })}</h3>
+              <span className="muted">{intl.formatMessage({ id: "toolkit.today.dose.day", defaultMessage: "day {day}" }, { day: m.day })}</span>
+            </div>
+            <p>
+              {intl.formatMessage(
+                { id: "toolkit.today.dose.summary", defaultMessage: "<b>{dose}</b>, {times}× a day — {taken} of {times} logged." },
+                { dose: m.dose, times: m.timesPerDay, taken: m.takenToday, b: (c) => <strong>{c}</strong> },
+              )}
+            </p>
             {m.takenToday < m.timesPerDay && (
-              <button type="button" className="btn small" onClick={() => dispatch(actions.logAidUse({ id: generateId(), aidId: aid.id, timestamp: new Date().toISOString(), note: null, beforeDrinking: null }))}>Log a dose</button>
+              <button type="button" className="btn small" onClick={() => dispatch(actions.logAidUse({ id: generateId(), aidId: aid.id, timestamp: new Date().toISOString(), note: null, beforeDrinking: null }))}>
+                {intl.formatMessage({ id: "toolkit.today.dose.log", defaultMessage: "Log a dose" })}
+              </button>
             )}
           </section>
         );
@@ -50,21 +83,30 @@ export function TodayCards(props: TabProps) {
 
       {program && (
         <section className="panel stack">
-          <h3>Today's mission</h3>
+          <h3>{intl.formatMessage({ id: "toolkit.today.mission.heading", defaultMessage: "Today's mission" })}</h3>
           <ProgramMissions status={program} dispatch={dispatch} limit={1} />
         </section>
       )}
 
       {ladder && (
         <section className="panel tint-leaf stack">
-          <div className="spread"><h3>Reward ladder</h3><span className="soft">{ladder.totalPoints} points</span></div>
+          <div className="spread">
+            <h3>{intl.formatMessage({ id: "toolkit.today.ladder.heading", defaultMessage: "Reward ladder" })}</h3>
+            <span className="soft">{intl.formatMessage({ id: "toolkit.today.ladder.points", defaultMessage: "{points, plural, one {# point} other {# points}}" }, { points: ladder.totalPoints })}</span>
+          </div>
           <p>
             {ladder.recovering
-              ? `Rebuilding: ${ladder.restoreInDays} more clean day${ladder.restoreInDays === 1 ? "" : "s"} restores your old level.`
-              : `Day ${ladder.streakDays} of your streak. Tomorrow is worth ${ladder.nextPoints} points.`}
+              ? intl.formatMessage(
+                { id: "toolkit.today.ladder.rebuilding", defaultMessage: "Rebuilding: {days, plural, one {# more clean day} other {# more clean days}} restores your old level." },
+                { days: ladder.restoreInDays },
+              )
+              : intl.formatMessage(
+                { id: "toolkit.today.ladder.streak", defaultMessage: "Day {day} of your streak. Tomorrow is worth {points, plural, one {# point} other {# points}}." },
+                { day: ladder.streakDays, points: ladder.nextPoints },
+              )}
           </p>
-          <Meter value={Math.min(1, ladder.nextPoints / 100)} tone="amber" label="Ladder level" />
-          <p className="muted">Each clean day is worth more than the last; a slip resets the value, and three good days bring it back. Ask a supporter to turn points into real rewards.</p>
+          <Meter value={Math.min(1, ladder.nextPoints / 100)} tone="amber" label={intl.formatMessage({ id: "toolkit.today.ladder.meter", defaultMessage: "Ladder level" })} />
+          <p className="muted">{intl.formatMessage({ id: "toolkit.today.ladder.explainer", defaultMessage: "Each clean day is worth more than the last; a slip resets the value, and three good days bring it back. Ask a supporter to turn points into real rewards." })}</p>
         </section>
       )}
     </>

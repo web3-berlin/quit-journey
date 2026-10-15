@@ -3,6 +3,7 @@
  * and the disguised launcher icon. Nothing leaves the phone.
  */
 import { isAndroid, QjNative } from "./native.js";
+import { formatMessage } from "./translate.js";
 
 const PIN_KEY = "qj-pin";
 const ATTEMPTS_KEY = "qj-pin-attempts";
@@ -61,7 +62,7 @@ export async function setPin(pin: string | null): Promise<void> {
     writeJson(PIN_KEY, null);
     return;
   }
-  if (!isValidPin(pin)) throw new Error("A PIN is 4 to 8 digits.");
+  if (!isValidPin(pin)) throw new Error(formatMessage({ id: "mobile.privacy.pinFormat", defaultMessage: "A PIN is 4 to 8 digits." }));
   const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
   writeJson(PIN_KEY, { salt, hash: await hashPin(pin, salt) } satisfies StoredPin);
 }
