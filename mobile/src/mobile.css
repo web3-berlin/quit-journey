@@ -62,3 +62,79 @@ body {
 #root .qj:has(.journey-switcher) .sky {
   padding-top: calc(72px + var(--safe-top));
 }
+
+/* PIN lock: covers the app until unlocked. */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(24px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+  background: linear-gradient(180deg, #7fb8dc 0%, #e4f0f7 60%);
+}
+.lock-screen .lock-card {
+  width: 100%;
+  max-width: 340px;
+  background: #fbfdfe;
+  border-radius: 18px;
+  padding: 24px;
+}
+.lock-screen input {
+  font-size: 1.6rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+}
+.lock-screen .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Mobile-only settings lists (apps for screen time, meetings). */
+#root .qj .pick-list {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px 12px;
+  background: var(--paper);
+}
+#root .qj .pick-list label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+}
+#root .qj .pick-list input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+#root .qj .meeting {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+#root .qj .meeting:first-child {
+  border-top: 0;
+}
+#root .qj .meeting .star {
+  flex: none;
+  border: 0;
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: var(--ink-mute);
+}
+#root .qj .meeting .star[aria-pressed="true"] {
+  color: var(--amber);
+}
+#root .qj .meeting a {
+  color: var(--leaf-deep);
+}

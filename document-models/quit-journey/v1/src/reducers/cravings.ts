@@ -8,7 +8,12 @@ import {
 export const quitJourneyCravingsOperations: QuitJourneyCravingsOperations = {
   logCravingOperation(state, action) {
     const i = action.input;
-    if (!Number.isInteger(i.intensity) || i.intensity < 1 || i.intensity > 5) {
+    const validIntensity = (n: number) =>
+      Number.isInteger(n) && n >= 1 && n <= 5;
+    if (
+      !validIntensity(i.intensity) ||
+      (i.intensityAfter != null && !validIntensity(i.intensityAfter))
+    ) {
       throw new InvalidCravingIntensityError(
         "Intensity must be an integer between 1 and 5",
       );
@@ -25,6 +30,7 @@ export const quitJourneyCravingsOperations: QuitJourneyCravingsOperations = {
       outcome: i.outcome,
       durationMinutes: i.durationMinutes ?? null,
       note: i.note || null,
+      intensityAfter: i.intensityAfter ?? null,
     });
   },
   deleteCravingOperation(state, action) {

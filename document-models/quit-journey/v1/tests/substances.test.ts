@@ -38,6 +38,7 @@ function plan(quitAt: number, overrides: Partial<QuitPlan> = {}): QuitPlan {
     unitLabel: null,
     goal: null,
     dailyLimit: null,
+    standardDrinkGrams: null,
     ...overrides,
   };
 }

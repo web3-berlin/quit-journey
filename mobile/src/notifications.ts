@@ -34,7 +34,30 @@ export async function ensureChannels() {
   if (Capacitor.getPlatform() !== "android") return;
   await LocalNotifications.createChannel({ id: "milestones", name: "Health milestones", description: "When your body reaches a recovery milestone", importance: 4 });
   await LocalNotifications.createChannel({ id: "reminders", name: "Check-in reminders", description: "Daily check-in and risky-time heads-ups", importance: 3 });
+  // Channel sound and importance are fixed once created; the sound lives in android/app/src/main/res/raw.
+  await LocalNotifications.createChannel({
+    id: SAFETY_CHANNEL, name: "Safety check alarms", description: "Loud alarm when a safety check you started runs out",
+    importance: 5, visibility: 0, vibration: true, sound: "safety_alarm.wav", lights: true, lightColor: "#D9483B",
+  });
 }
+
+export const SAFETY_CHANNEL = "safety";
+
+/** Safety alarms use their own id range so journey schedules (blocks of 10,000 from 0) never touch them. */
+const SAFETY_ID_MIN = 900_000;
+const SAFETY_ID_SPAN = 100_000;
+
+/** Stable notification id for a safety check (FNV-1a hash of its id, inside the reserved range). */
+export function safetyNotificationId(checkId: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < checkId.length; i++) {
+    h ^= checkId.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return SAFETY_ID_MIN + (h % SAFETY_ID_SPAN);
+}
+
+export const isSafetyNotificationId = (id: number) => id >= SAFETY_ID_MIN && id < SAFETY_ID_MIN + SAFETY_ID_SPAN;
 
 /** Asks for notification permission; resolves to whether it was granted. */
 export async function requestPermission(): Promise<boolean> {
@@ -92,12 +115,13 @@ export function buildSchedule(state: QuitJourneyState, settings: NotifySettings,
   }));
 }
 
-/** Replaces all pending notifications with a freshly computed schedule for every journey. */
+/** Replaces all pending journey notifications with a freshly computed schedule; safety alarms are left alone. */
 export async function syncNotifications(docs: QuitJourneyDocument[], settings: NotifySettings) {
   if (!isNative()) return;
   const pending = await LocalNotifications.getPending();
-  if (pending.notifications.length) {
-    await LocalNotifications.cancel({ notifications: pending.notifications.map((n) => ({ id: n.id })) });
+  const stale = pending.notifications.filter((n) => !isSafetyNotificationId(n.id));
+  if (stale.length) {
+    await LocalNotifications.cancel({ notifications: stale.map((n) => ({ id: n.id })) });
   }
   const now = Date.now();
   const started = docs.filter((d) => d.state.global.plan);

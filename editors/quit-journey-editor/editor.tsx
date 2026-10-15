@@ -8,7 +8,7 @@ export default function Editor() {
   return (
     <>
       <style>{fontImport}</style>
-      <QuitJourneyApp state={document.state.global} dispatch={dispatch} toolbar={<DocumentToolbar />} />
+      <QuitJourneyApp state={document.state.global} local={document.state.local} dispatch={dispatch} toolbar={<DocumentToolbar />} />
     </>
   );
 }

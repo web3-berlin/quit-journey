@@ -1,4 +1,4 @@
-import { actions, substanceProfile, SUBSTANCE_GROUPS, type ProductType, type QuitPlan, type RecoveryGoal } from "document-models/quit-journey";
+import { actions, STANDARD_DRINKS, substanceProfile, SUBSTANCE_GROUPS, type ProductType, type QuitPlan, type RecoveryGoal } from "document-models/quit-journey";
 import { useState } from "react";
 import { capitalize as cap, fromLocalInput, singular, toLocalInput } from "../lib/format.js";
 import { PRODUCT_LABELS } from "../lib/labels.js";
@@ -20,6 +20,7 @@ export function PlanForm({ plan, dispatch, now, onSaved }: { plan: QuitPlan | nu
   const [price, setPrice] = useState(String(plan?.packPrice ?? 8.5));
   const [currency, setCurrency] = useState(plan?.currency ?? "EUR");
   const [years, setYears] = useState(plan?.yearsSmoked != null ? String(plan.yearsSmoked) : "");
+  const [drinkGrams, setDrinkGrams] = useState(plan?.standardDrinkGrams != null ? String(plan.standardDrinkGrams) : "");
   const [error, setError] = useState<string | null>(null);
 
   const profile = substanceProfile(product);
@@ -62,6 +63,7 @@ export function PlanForm({ plan, dispatch, now, onSaved }: { plan: QuitPlan | nu
       unitLabel: unitLabel.trim() || null,
       goal,
       dailyLimit,
+      standardDrinkGrams: product === "ALCOHOL" && drinkGrams ? Number(drinkGrams) : null,
     }));
     onSaved?.();
   }
@@ -122,6 +124,14 @@ export function PlanForm({ plan, dispatch, now, onSaved }: { plan: QuitPlan | nu
         <Field label="Currency">
           <Select value={currency} options={CURRENCIES.map((c) => [c, c] as [string, string])} onChange={(v) => v && setCurrency(v)} />
         </Field>
+        {product === "ALCOHOL" && (
+          <Field label="Standard drink in your country">
+            <select value={drinkGrams} onChange={(e) => setDrinkGrams(e.target.value)}>
+              <option value="">WHO standard (10 g)</option>
+              {STANDARD_DRINKS.map((d) => <option key={d.country} value={String(d.grams)}>{d.country} ({d.grams} g)</option>)}
+            </select>
+          </Field>
+        )}
         <Field label="Years using (optional)">
           <input type="number" min="0" step="0.5" value={years} onChange={(e) => setYears(e.target.value)} />
         </Field>

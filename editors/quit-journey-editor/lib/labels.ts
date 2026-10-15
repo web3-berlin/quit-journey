@@ -1,6 +1,13 @@
 import type {
+  BeverageType,
   CopingStrategy,
   CravingTrigger,
+  DrugTestResult,
+  DrugTestType,
+  ExclusionScheme,
+  HarmReductionAction,
+  MedicationPlanSource,
+  NaloxoneKind,
   ProductType,
   QuitAidType,
   WithdrawalSymptom,
@@ -121,3 +128,63 @@ export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function entries<K extends string>(labels: Record<K, string>): [K, string][] {
   return Object.entries(labels) as [K, string][];
 }
+
+export const NALOXONE_LABELS: Record<NaloxoneKind, string> = {
+  NASAL_SPRAY_4MG: "Nasal spray 4 mg",
+  NASAL_SPRAY_8MG: "Nasal spray 8 mg",
+  INJECTABLE: "Injectable",
+  AUTO_INJECTOR: "Auto-injector",
+  OTHER: "Other",
+};
+
+export const DRUG_TEST_LABELS: Record<DrugTestType, string> = {
+  FENTANYL_STRIP: "Fentanyl strip",
+  XYLAZINE_STRIP: "Xylazine strip",
+  NITAZENE_STRIP: "Nitazene strip",
+  MEDETOMIDINE_STRIP: "Medetomidine strip",
+  BENZO_STRIP: "Benzo strip",
+  REAGENT_KIT: "Reagent kit",
+  CHECKING_SERVICE: "Drug-checking service",
+  OTHER: "Other test",
+};
+
+export const DRUG_RESULT_LABELS: Record<DrugTestResult, string> = {
+  POSITIVE: "Positive (detected)",
+  NEGATIVE: "Negative (not detected)",
+  INCONCLUSIVE: "Unclear",
+};
+
+export const HARM_ACTION_LABELS: Record<HarmReductionAction, string> = {
+  DID_NOT_USE: "Didn't use it",
+  USED_LESS: "Used less",
+  WENT_SLOWER: "Went slower",
+  NOT_ALONE: "Wasn't alone",
+  NALOXONE_READY: "Naloxone ready",
+  DISCARDED: "Threw it away",
+  TOLD_SOMEONE: "Told someone",
+};
+
+export const BEVERAGE_LABELS: Record<BeverageType, string> = {
+  BEER: "Beer",
+  WINE: "Wine",
+  SPIRITS: "Spirits",
+  CIDER: "Cider",
+  COCKTAIL: "Cocktail",
+  OTHER: "Other",
+};
+
+export const EXCLUSION_LABELS: Record<ExclusionScheme, string> = {
+  GAMSTOP: "GAMSTOP (UK)",
+  OASIS: "OASIS (Germany)",
+  BETBLOCKER: "BetBlocker",
+  GAMBAN: "Gamban",
+  BANK_BLOCK: "Bank gambling block",
+  VENUE: "Venue self-exclusion",
+  OTHER: "Other",
+};
+
+export const MED_SOURCE_LABELS: Record<MedicationPlanSource, string> = {
+  CLINICIAN: "From my clinician",
+  LEAFLET: "From the package leaflet",
+  SELF: "My own notes",
+};

@@ -6,16 +6,43 @@ import { App as CapApp } from "@capacitor/app";
 import { StrictMode, useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { QuitJourneyApp, type BackHandler } from "../../editors/quit-journey-editor/QuitJourneyApp.js";
+import { useHost } from "./host.js";
 import { JourneySwitcher } from "./JourneySwitcher.js";
+import { LockScreen } from "./LockScreen.js";
 import { MobileSettings } from "./MobileSettings.js";
 import { ensureChannels, isNative, readSettings, syncNotifications, writeSettings, type NotifySettings } from "./notifications.js";
+import { pinEnabled } from "./privacy.js";
+import { isAndroid, QjNative } from "./native.js";
 import { useJourneys } from "./store.js";
+
+/** Ask for the PIN again after this long in the background. */
+const RELOCK_AFTER_MS = 60_000;
 
 function App() {
   const { docs, active: doc, activeId, setActiveId, dispatch, startNew, restore, remove, flush } = useJourneys();
   const [settings, setSettings] = useState<NotifySettings>(readSettings);
   const backHandler = useRef<BackHandler | null>(null);
+  const host = useHost();
+  const [locked, setLocked] = useState(pinEnabled);
+  const pausedAt = useRef<number | null>(null);
+  const lockedRef = useRef(locked);
+  lockedRef.current = locked;
   const state = doc?.state.global;
+
+  // PIN lock on resume after more than a minute away; with a PIN, keep the app out of recent-apps previews.
+  useEffect(() => {
+    if (!isNative()) return;
+    if (isAndroid() && pinEnabled()) void QjNative.setSecure({ on: true });
+    const subs = [
+      CapApp.addListener("pause", () => { pausedAt.current = Date.now(); }),
+      CapApp.addListener("resume", () => {
+        const away = pausedAt.current === null ? 0 : Date.now() - pausedAt.current;
+        pausedAt.current = null;
+        if (away > RELOCK_AFTER_MS && pinEnabled()) setLocked(true);
+      }),
+    ];
+    return () => subs.forEach((s) => void s.then((h) => h.remove()));
+  }, []);
 
   const registerBackHandler = useCallback((handler: BackHandler) => {
     backHandler.current = handler;
@@ -29,6 +56,7 @@ function App() {
     void ensureChannels();
     const subs = [
       CapApp.addListener("backButton", () => {
+        if (lockedRef.current) return void CapApp.minimizeApp();
         if (!backHandler.current?.()) void CapApp.minimizeApp();
       }),
       CapApp.addListener("pause", () => void flush()),
@@ -52,20 +80,29 @@ function App() {
     setSettings(next);
   }, []);
 
-  if (!docs || !doc || !state || !activeId) return <div className="boot" aria-busy="true" />;
+  const lock = locked ? <LockScreen onUnlock={() => setLocked(false)} /> : null;
+  if (!docs || !doc || !state || !activeId) return lock ?? <div className="boot" aria-busy="true" />;
 
   return (
-    <QuitJourneyApp
-      // Remount per journey so tab and form state never leak between journeys.
-      key={activeId}
-      state={state}
-      dispatch={dispatch}
-      registerBackHandler={registerBackHandler}
-      toolbar={docs.length > 1 || state.plan ? <JourneySwitcher docs={docs} activeId={activeId} onSelect={setActiveId} onNew={startNew} /> : undefined}
-      settings={
-        <MobileSettings doc={doc} journeyCount={docs.length} settings={settings} onSettings={updateSettings} onRestore={restore} onDelete={() => remove(activeId)} />
-      }
-    />
+    <>
+      {lock}
+      {/* Hidden rather than unmounted while locked, so half-filled forms survive. */}
+      <div hidden={locked}>
+        <QuitJourneyApp
+          // Remount per journey so tab and form state never leak between journeys.
+          key={activeId}
+          state={state}
+          local={doc.state.local}
+          host={host}
+          dispatch={dispatch}
+          registerBackHandler={registerBackHandler}
+          toolbar={docs.length > 1 || state.plan ? <JourneySwitcher docs={docs} activeId={activeId} onSelect={setActiveId} onNew={startNew} /> : undefined}
+          settings={
+            <MobileSettings doc={doc} journeyCount={docs.length} settings={settings} onSettings={updateSettings} onRestore={restore} onDelete={() => remove(activeId)} host={host} />
+          }
+        />
+      </div>
+    </>
   );
 }
 

@@ -6,19 +6,19 @@
     "website": "https://www.powerhouse.inc"
   },
   "extension": ".quit",
-  "description": "A complete addiction-recovery program for nicotine, alcohol, drugs and behavioural addictions: quit plan, live health recovery, savings and rewards, craving log with personal coping insights, slips without shame, daily check-ins, quit aids and a support network.",
+  "description": "A complete addiction-recovery program for nicotine, alcohol, drugs and behavioural addictions: recovery timelines, savings and rewards, cravings with personal coping insights, harm reduction (naloxone, drug checking, safety timer), if-then plans, validated check-in scales, medication schedules, programs, slips without shame and a support network.",
   "specifications": [
     {
       "state": {
         "local": {
-          "schema": "",
+          "schema": "enum SafetyCheckOutcome { ACTIVE OK ALARM CANCELLED }\n\ntype SafetyCheck {\n    id: OID!\n    startedAt: DateTime!\n    durationMinutes: Int!\n    note: String\n    contactIds: [OID!]!\n    endedAt: DateTime\n    outcome: SafetyCheckOutcome!\n}\n\ntype RiskyPlace {\n    id: OID!\n    label: String!\n    lat: Float!\n    lng: Float!\n    radiusM: Int!\n    planId: OID\n}\n\ntype QuitJourneyLocalState {\n    safetyChecks: [SafetyCheck!]\n    riskyPlaces: [RiskyPlace!]\n}",
           "examples": [],
-          "initialValue": ""
+          "initialValue": "{\n  \"safetyChecks\": [],\n  \"riskyPlaces\": []\n}"
         },
         "global": {
-          "schema": "enum ProductType { CIGARETTES ROLL_YOUR_OWN CIGARS VAPE HEATED_TOBACCO OTHER ALCOHOL CANNABIS OPIOIDS STIMULANTS BENZODIAZEPINES KRATOM GAMBLING GAMING PORNOGRAPHY SOCIAL_MEDIA CAFFEINE SUGAR }\nenum RecoveryGoal { ABSTINENCE REDUCTION }\nenum CravingTrigger { STRESS COFFEE ALCOHOL AFTER_MEAL BOREDOM SOCIAL WORK DRIVING WAKING_UP PHONE ARGUMENT CELEBRATION LONELINESS OTHER HUNGRY ANGRY TIRED PAIN PAYDAY PEOPLE_PLACES SEEING_IT BAD_NEWS }\nenum CopingStrategy { BREATHING WALK WATER SNACK GUM CALL_SOMEONE DISTRACTION EXERCISE MEDITATION QUIT_AID WAIT_IT_OUT OTHER URGE_SURFING SUPPORT_MEETING PLAY_THE_TAPE COLD_WATER PRAYER }\nenum CravingOutcome { RESISTED SMOKED }\nenum QuitAidType { PATCH GUM LOZENGE INHALER MOUTH_SPRAY NASAL_SPRAY VARENICLINE BUPROPION CYTISINE COUNSELING APP_PROGRAM OTHER METHADONE BUPRENORPHINE NALTREXONE ACAMPROSATE DISULFIRAM SUPPORT_GROUP THERAPY }\nenum WithdrawalSymptom { IRRITABILITY ANXIETY RESTLESSNESS INSOMNIA HUNGER HEADACHE LOW_MOOD POOR_CONCENTRATION COUGH CONSTIPATION DIZZINESS NAUSEA SWEATING MUSCLE_ACHES TREMOR CHILLS VIVID_DREAMS ANHEDONIA DIARRHEA }\n\ntype QuitPlan {\n    quitDateTime: DateTime!\n    productType: ProductType!\n    unitsPerDay: Float!\n    unitsPerPack: Int!\n    packPrice: Float!\n    currency: Currency!\n    yearsSmoked: Float\n    customName: String\n    unitLabel: String\n    goal: RecoveryGoal\n    dailyLimit: Float\n}\n\ntype Motivation {\n    id: OID!\n    text: String!\n    imageUrl: URL\n}\n\ntype Craving {\n    id: OID!\n    timestamp: DateTime!\n    intensity: Int!\n    trigger: CravingTrigger!\n    strategy: CopingStrategy\n    outcome: CravingOutcome!\n    durationMinutes: Int\n    note: String\n}\n\ntype Slip {\n    id: OID!\n    timestamp: DateTime!\n    units: Float!\n    trigger: CravingTrigger\n    note: String\n}\n\ntype QuitAttempt {\n    id: OID!\n    quitDateTime: DateTime!\n    endedAt: DateTime!\n    reason: String\n}\n\ntype CheckIn {\n    id: OID!\n    date: String!\n    mood: Int!\n    cravingLevel: Int!\n    energy: Int\n    sleepQuality: Int\n    weightKg: Float\n    symptoms: [WithdrawalSymptom!]!\n    note: String\n}\n\ntype RewardGoal {\n    id: OID!\n    title: String!\n    cost: Float!\n    emoji: String\n    claimedAt: DateTime\n}\n\ntype QuitAid {\n    id: OID!\n    type: QuitAidType!\n    name: String\n    dosage: String\n    startedAt: DateTime!\n    endedAt: DateTime\n}\n\ntype AidUse {\n    id: OID!\n    aidId: OID!\n    timestamp: DateTime!\n    note: String\n}\n\ntype SupportContact {\n    id: OID!\n    name: String!\n    phone: String\n    relation: String\n}\n\ntype QuitJourneyState {\n    displayName: String\n    plan: QuitPlan\n    motivations: [Motivation!]!\n    prepTasksDone: [String!]!\n    cravings: [Craving!]!\n    slips: [Slip!]!\n    pastAttempts: [QuitAttempt!]!\n    checkIns: [CheckIn!]!\n    rewards: [RewardGoal!]!\n    aids: [QuitAid!]!\n    aidUses: [AidUse!]!\n    supportContacts: [SupportContact!]!\n    quitlinePhone: String\n}",
+          "schema": "enum ProductType { CIGARETTES ROLL_YOUR_OWN CIGARS VAPE HEATED_TOBACCO OTHER ALCOHOL CANNABIS OPIOIDS STIMULANTS BENZODIAZEPINES KRATOM GAMBLING GAMING PORNOGRAPHY SOCIAL_MEDIA CAFFEINE SUGAR }\nenum RecoveryGoal { ABSTINENCE REDUCTION }\nenum CravingTrigger { STRESS COFFEE ALCOHOL AFTER_MEAL BOREDOM SOCIAL WORK DRIVING WAKING_UP PHONE ARGUMENT CELEBRATION LONELINESS OTHER HUNGRY ANGRY TIRED PAIN PAYDAY PEOPLE_PLACES SEEING_IT BAD_NEWS }\nenum CopingStrategy { BREATHING WALK WATER SNACK GUM CALL_SOMEONE DISTRACTION EXERCISE MEDITATION QUIT_AID WAIT_IT_OUT OTHER URGE_SURFING SUPPORT_MEETING PLAY_THE_TAPE COLD_WATER PRAYER }\nenum CravingOutcome { RESISTED SMOKED }\nenum QuitAidType { PATCH GUM LOZENGE INHALER MOUTH_SPRAY NASAL_SPRAY VARENICLINE BUPROPION CYTISINE COUNSELING APP_PROGRAM OTHER METHADONE BUPRENORPHINE NALTREXONE ACAMPROSATE DISULFIRAM SUPPORT_GROUP THERAPY }\nenum WithdrawalSymptom { IRRITABILITY ANXIETY RESTLESSNESS INSOMNIA HUNGER HEADACHE LOW_MOOD POOR_CONCENTRATION COUGH CONSTIPATION DIZZINESS NAUSEA SWEATING MUSCLE_ACHES TREMOR CHILLS VIVID_DREAMS ANHEDONIA DIARRHEA }\n\ntype QuitPlan {\n    quitDateTime: DateTime!\n    productType: ProductType!\n    unitsPerDay: Float!\n    unitsPerPack: Int!\n    packPrice: Float!\n    currency: Currency!\n    yearsSmoked: Float\n    customName: String\n    unitLabel: String\n    goal: RecoveryGoal\n    dailyLimit: Float\n    standardDrinkGrams: Float\n}\n\ntype Motivation {\n    id: OID!\n    text: String!\n    imageUrl: URL\n}\n\ntype Craving {\n    id: OID!\n    timestamp: DateTime!\n    intensity: Int!\n    trigger: CravingTrigger!\n    strategy: CopingStrategy\n    outcome: CravingOutcome!\n    durationMinutes: Int\n    note: String\n    intensityAfter: Int\n}\n\ntype Slip {\n    id: OID!\n    timestamp: DateTime!\n    units: Float!\n    trigger: CravingTrigger\n    note: String\n}\n\ntype QuitAttempt {\n    id: OID!\n    quitDateTime: DateTime!\n    endedAt: DateTime!\n    reason: String\n}\n\ntype CheckIn {\n    id: OID!\n    date: String!\n    mood: Int!\n    cravingLevel: Int!\n    energy: Int\n    sleepQuality: Int\n    weightKg: Float\n    symptoms: [WithdrawalSymptom!]!\n    note: String\n}\n\ntype RewardGoal {\n    id: OID!\n    title: String!\n    cost: Float!\n    emoji: String\n    claimedAt: DateTime\n}\n\ntype QuitAid {\n    id: OID!\n    type: QuitAidType!\n    name: String\n    dosage: String\n    startedAt: DateTime!\n    endedAt: DateTime\n}\n\ntype AidUse {\n    id: OID!\n    aidId: OID!\n    timestamp: DateTime!\n    note: String\n    beforeDrinking: Boolean\n}\n\ntype SupportContact {\n    id: OID!\n    name: String!\n    phone: String\n    relation: String\n}\n\ntype QuitJourneyState {\n    displayName: String\n    plan: QuitPlan\n    motivations: [Motivation!]!\n    prepTasksDone: [String!]!\n    cravings: [Craving!]!\n    slips: [Slip!]!\n    pastAttempts: [QuitAttempt!]!\n    checkIns: [CheckIn!]!\n    rewards: [RewardGoal!]!\n    aids: [QuitAid!]!\n    aidUses: [AidUse!]!\n    supportContacts: [SupportContact!]!\n    quitlinePhone: String\n    naloxoneKits: [NaloxoneKit!]\n    drugChecks: [DrugCheck!]\n    exclusions: [Exclusion!]\n    ifThenPlans: [IfThenPlan!]\n    drinks: [DrinkEntry!]\n    screenTime: [ScreenTimeEntry!]\n    gamblingLosses: [GamblingLoss!]\n    assessments: [Assessment!]\n    medicationPlans: [MedicationPlan!]\n    takeHomes: [TakeHome!]\n    programs: [ProgramEnrollment!]\n}\n\nenum NaloxoneKind { NASAL_SPRAY_4MG NASAL_SPRAY_8MG INJECTABLE AUTO_INJECTOR OTHER }\nenum DrugTestType { FENTANYL_STRIP XYLAZINE_STRIP NITAZENE_STRIP MEDETOMIDINE_STRIP BENZO_STRIP REAGENT_KIT CHECKING_SERVICE OTHER }\nenum DrugTestResult { POSITIVE NEGATIVE INCONCLUSIVE }\nenum HarmReductionAction { DID_NOT_USE USED_LESS WENT_SLOWER NOT_ALONE NALOXONE_READY DISCARDED TOLD_SOMEONE }\nenum BeverageType { BEER WINE SPIRITS CIDER COCKTAIL OTHER }\nenum AssessmentInstrument { AUDIT_C AUDIT HSI CUDIT_R PGSI BARC_10 SOWS SAWS CWS ACSA }\nenum MedicationPlanSource { CLINICIAN LEAFLET SELF }\nenum ProgramKey { QUIT_VAPING DAILY_MISSIONS DRY_MONTH T_BREAK SKILL_LESSONS }\nenum ExclusionScheme { GAMSTOP OASIS BETBLOCKER GAMBAN BANK_BLOCK VENUE OTHER }\n\ntype NaloxoneKit {\n    id: OID!\n    kind: NaloxoneKind!\n    location: String\n    expiresOn: String\n    addedAt: DateTime!\n    usedAt: DateTime\n}\n\ntype DrugCheck {\n    id: OID!\n    checkedAt: DateTime!\n    expectedSubstance: String\n    testType: DrugTestType!\n    result: DrugTestResult!\n    actions: [HarmReductionAction!]!\n    note: String\n}\n\ntype Exclusion {\n    id: OID!\n    scheme: ExclusionScheme!\n    startDate: String!\n    endDate: String\n    note: String\n}\n\ntype IfThenPlan {\n    id: OID!\n    trigger: CravingTrigger\n    ifText: String!\n    thenText: String!\n    strategy: CopingStrategy\n    createdAt: DateTime!\n    lastReviewedAt: DateTime\n}\n\ntype DrinkEntry {\n    id: OID!\n    timestamp: DateTime!\n    beverage: BeverageType!\n    volumeMl: Float!\n    abvPercent: Float!\n    gramsAlcohol: Float!\n    standardDrinks: Float!\n    slipId: OID!\n}\n\ntype ScreenTimeEntry {\n    id: OID!\n    date: String!\n    minutes: Int!\n}\n\ntype GamblingLoss {\n    id: OID!\n    date: String!\n    amount: Float!\n    note: String\n}\n\ntype Assessment {\n    id: OID!\n    instrument: AssessmentInstrument!\n    takenAt: DateTime!\n    answers: [Int!]!\n    score: Int!\n}\n\ntype DoseStep {\n    id: OID!\n    fromDay: Int!\n    dose: String!\n    timesPerDay: Int!\n}\n\ntype MedicationPlan {\n    id: OID!\n    aidId: OID!\n    source: MedicationPlanSource!\n    startDate: String!\n    steps: [DoseStep!]!\n    note: String\n}\n\ntype TakeHome {\n    id: OID!\n    aidId: OID!\n    pickedUpOn: String!\n    doses: Int!\n}\n\ntype ProgramEnrollment {\n    id: OID!\n    program: ProgramKey!\n    startedAt: DateTime!\n    completedMissions: [String!]!\n    endedAt: DateTime\n}\n",
           "examples": [],
-          "initialValue": "{\n  \"displayName\": null,\n  \"plan\": null,\n  \"motivations\": [],\n  \"prepTasksDone\": [],\n  \"cravings\": [],\n  \"slips\": [],\n  \"pastAttempts\": [],\n  \"checkIns\": [],\n  \"rewards\": [],\n  \"aids\": [],\n  \"aidUses\": [],\n  \"supportContacts\": [],\n  \"quitlinePhone\": null\n}"
+          "initialValue": "{\n  \"displayName\": null,\n  \"plan\": null,\n  \"motivations\": [],\n  \"prepTasksDone\": [],\n  \"cravings\": [],\n  \"slips\": [],\n  \"pastAttempts\": [],\n  \"checkIns\": [],\n  \"rewards\": [],\n  \"aids\": [],\n  \"aidUses\": [],\n  \"supportContacts\": [],\n  \"quitlinePhone\": null,\n  \"naloxoneKits\": [],\n  \"drugChecks\": [],\n  \"exclusions\": [],\n  \"ifThenPlans\": [],\n  \"drinks\": [],\n  \"screenTime\": [],\n  \"gamblingLosses\": [],\n  \"assessments\": [],\n  \"medicationPlans\": [],\n  \"takeHomes\": [],\n  \"programs\": []\n}"
         }
       },
       "modules": [
@@ -31,9 +31,9 @@
               "id": "op-set-quit-plan",
               "name": "SET_QUIT_PLAN",
               "description": "Sets or updates the quit plan: what is being quit, quit date, goal (abstinence or reduction) and the consumption/cost baseline",
-              "schema": "input SetQuitPlanInput {\n    quitDateTime: DateTime!\n    productType: ProductType!\n    unitsPerDay: Float!\n    unitsPerPack: Int!\n    packPrice: Float!\n    currency: Currency!\n    yearsSmoked: Float\n    customName: String\n    unitLabel: String\n    goal: RecoveryGoal\n    dailyLimit: Float\n}",
+              "schema": "input SetQuitPlanInput {\n    quitDateTime: DateTime!\n    productType: ProductType!\n    unitsPerDay: Float!\n    unitsPerPack: Int!\n    packPrice: Float!\n    currency: Currency!\n    yearsSmoked: Float\n    customName: String\n    unitLabel: String\n    goal: RecoveryGoal\n    dailyLimit: Float\n    standardDrinkGrams: Float\n}",
               "template": "Sets or updates the quit plan: quit date, product and consumption/cost baseline",
-              "reducer": "const i = action.input;\nif (i.unitsPerDay <= 0 || i.unitsPerPack <= 0 || i.packPrice < 0) {\n  throw new InvalidQuitPlanError(\"unitsPerDay and unitsPerPack must be positive and packPrice must not be negative\");\n}\nlet dailyLimit: number | null = null;\nif (i.goal === \"REDUCTION\") {\n  if (i.dailyLimit == null || i.dailyLimit <= 0 || i.dailyLimit >= i.unitsPerDay) {\n    throw new InvalidReductionGoalError(\"A reduction goal needs a daily limit above 0 and below your current daily amount\");\n  }\n  dailyLimit = i.dailyLimit;\n}\nstate.plan = {\n  quitDateTime: i.quitDateTime,\n  productType: i.productType,\n  unitsPerDay: i.unitsPerDay,\n  unitsPerPack: i.unitsPerPack,\n  packPrice: i.packPrice,\n  currency: i.currency,\n  yearsSmoked: i.yearsSmoked ?? null,\n  customName: i.customName?.trim() || null,\n  unitLabel: i.unitLabel?.trim() || null,\n  goal: i.goal ?? null,\n  dailyLimit,\n};",
+              "reducer": "const i = action.input;\nif (i.unitsPerDay <= 0 || i.unitsPerPack <= 0 || i.packPrice < 0 || (i.standardDrinkGrams != null && (i.standardDrinkGrams < 5 || i.standardDrinkGrams > 30))) {\n  throw new InvalidQuitPlanError(\"unitsPerDay and unitsPerPack must be positive and packPrice must not be negative\");\n}\nlet dailyLimit: number | null = null;\nif (i.goal === \"REDUCTION\") {\n  if (i.dailyLimit == null || i.dailyLimit <= 0 || i.dailyLimit >= i.unitsPerDay) {\n    throw new InvalidReductionGoalError(\"A reduction goal needs a daily limit above 0 and below your current daily amount\");\n  }\n  dailyLimit = i.dailyLimit;\n}\nstate.plan = {\n  quitDateTime: i.quitDateTime,\n  productType: i.productType,\n  unitsPerDay: i.unitsPerDay,\n  unitsPerPack: i.unitsPerPack,\n  packPrice: i.packPrice,\n  currency: i.currency,\n  yearsSmoked: i.yearsSmoked ?? null,\n  customName: i.customName?.trim() || null,\n  unitLabel: i.unitLabel?.trim() || null,\n  goal: i.goal ?? null,\n  dailyLimit,\n  standardDrinkGrams: i.standardDrinkGrams ?? null,\n};",
               "errors": [
                 {
                   "id": "err-invalid-quit-plan",
@@ -124,9 +124,9 @@
               "id": "op-log-craving",
               "name": "LOG_CRAVING",
               "description": "Logs a craving with its intensity, trigger, coping strategy used and whether it was resisted",
-              "schema": "input LogCravingInput {\n    id: OID!\n    timestamp: DateTime!\n    intensity: Int!\n    trigger: CravingTrigger!\n    strategy: CopingStrategy\n    outcome: CravingOutcome!\n    durationMinutes: Int\n    note: String\n}",
+              "schema": "input LogCravingInput {\n    id: OID!\n    timestamp: DateTime!\n    intensity: Int!\n    trigger: CravingTrigger!\n    strategy: CopingStrategy\n    outcome: CravingOutcome!\n    durationMinutes: Int\n    note: String\n    intensityAfter: Int\n}",
               "template": "Logs a craving with its intensity, trigger, coping strategy used and whether it was resisted",
-              "reducer": "const i = action.input;\nif (!Number.isInteger(i.intensity) || i.intensity < 1 || i.intensity > 5) {\n  throw new InvalidCravingIntensityError(\"Intensity must be an integer between 1 and 5\");\n}\nif (i.durationMinutes != null && i.durationMinutes < 0) {\n  throw new InvalidCravingDurationError(\"Duration must not be negative\");\n}\nstate.cravings.push({\n  id: i.id,\n  timestamp: i.timestamp,\n  intensity: i.intensity,\n  trigger: i.trigger,\n  strategy: i.strategy ?? null,\n  outcome: i.outcome,\n  durationMinutes: i.durationMinutes ?? null,\n  note: i.note || null,\n});",
+              "reducer": "const i = action.input;\nconst validIntensity = (n: number) => Number.isInteger(n) && n >= 1 && n <= 5;\nif (!validIntensity(i.intensity) || (i.intensityAfter != null && !validIntensity(i.intensityAfter))) {\n  throw new InvalidCravingIntensityError(\"Intensity must be an integer between 1 and 5\");\n}\nif (i.durationMinutes != null && i.durationMinutes < 0) {\n  throw new InvalidCravingDurationError(\"Duration must not be negative\");\n}\nstate.cravings.push({\n  id: i.id,\n  timestamp: i.timestamp,\n  intensity: i.intensity,\n  trigger: i.trigger,\n  strategy: i.strategy ?? null,\n  outcome: i.outcome,\n  durationMinutes: i.durationMinutes ?? null,\n  note: i.note || null,\n  intensityAfter: i.intensityAfter ?? null,\n});",
               "errors": [
                 {
                   "id": "err-invalid-craving-intensity",
@@ -421,9 +421,9 @@
               "id": "op-log-aid-use",
               "name": "LOG_AID_USE",
               "description": "Logs a single use of a quit aid (e.g. a piece of gum or a new patch)",
-              "schema": "input LogAidUseInput {\n    id: OID!\n    aidId: OID!\n    timestamp: DateTime!\n    note: String\n}",
+              "schema": "input LogAidUseInput {\n    id: OID!\n    aidId: OID!\n    timestamp: DateTime!\n    note: String\n    beforeDrinking: Boolean\n}",
               "template": "Logs a single use of a quit aid (e.g. a piece of gum or a new patch)",
-              "reducer": "const i = action.input;\nif (!state.aids.some((a) => a.id === i.aidId)) {\n  throw new AidForUseNotFoundError(`Quit aid ${i.aidId} not found`);\n}\nstate.aidUses.push({ id: i.id, aidId: i.aidId, timestamp: i.timestamp, note: i.note || null });",
+              "reducer": "const i = action.input;\nif (!state.aids.some((a) => a.id === i.aidId)) {\n  throw new AidForUseNotFoundError(`Quit aid ${i.aidId} not found`);\n}\nstate.aidUses.push({ id: i.id, aidId: i.aidId, timestamp: i.timestamp, note: i.note || null, beforeDrinking: i.beforeDrinking ?? null });",
               "errors": [
                 {
                   "id": "err-aid-for-use-not-found",
@@ -489,6 +489,621 @@
               "template": "Sets the phone number of the local quitline",
               "reducer": "state.quitlinePhone = action.input.phone || null;",
               "errors": [],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        },
+        {
+          "id": "mod-safety",
+          "name": "safety",
+          "description": "Harm reduction: naloxone kits, drug checking, gambling exclusions; private safety timer and risky places (local scope)",
+          "operations": [
+            {
+              "id": "op-add-naloxone-kit",
+              "name": "ADD_NALOXONE_KIT",
+              "description": "Registers a naloxone kit with its location and expiry date",
+              "schema": "input AddNaloxoneKitInput {\n    id: OID!\n    kind: NaloxoneKind!\n    location: String\n    expiresOn: String\n    addedAt: DateTime!\n}",
+              "template": "Registers a naloxone kit with its location and expiry date",
+              "reducer": "const i = action.input;\nif (i.expiresOn && !/^\\d{4}-\\d{2}-\\d{2}$/.test(i.expiresOn)) {\n  throw new InvalidNaloxoneExpiryError(\"Expiry date must be a calendar date in YYYY-MM-DD format\");\n}\n(state.naloxoneKits ??= []).push({ id: i.id, kind: i.kind, location: i.location?.trim() || null, expiresOn: i.expiresOn || null, addedAt: i.addedAt, usedAt: null });",
+              "errors": [
+                {
+                  "id": "err-invalid-naloxone-expiry",
+                  "name": "InvalidNaloxoneExpiryError",
+                  "code": "INVALID_NALOXONE_EXPIRY",
+                  "description": "Expiry date is not YYYY-MM-DD",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-mark-naloxone-used",
+              "name": "MARK_NALOXONE_USED",
+              "description": "Marks a naloxone kit as used (replace it soon)",
+              "schema": "input MarkNaloxoneUsedInput {\n    id: OID!\n    usedAt: DateTime!\n}",
+              "template": "Marks a naloxone kit as used (replace it soon)",
+              "reducer": "const kit = (state.naloxoneKits ?? []).find((k) => k.id === action.input.id);\nif (!kit) {\n  throw new NaloxoneKitNotFoundError(`Naloxone kit ${action.input.id} not found`);\n}\nkit.usedAt = action.input.usedAt;",
+              "errors": [
+                {
+                  "id": "err-naloxone-kit-not-found",
+                  "name": "NaloxoneKitNotFoundError",
+                  "code": "NALOXONE_KIT_NOT_FOUND",
+                  "description": "No naloxone kit with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-remove-naloxone-kit",
+              "name": "REMOVE_NALOXONE_KIT",
+              "description": "Removes a naloxone kit",
+              "schema": "input RemoveNaloxoneKitInput {\n    id: OID!\n}",
+              "template": "Removes a naloxone kit",
+              "reducer": "const index = (state.naloxoneKits ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new NaloxoneKitToRemoveNotFoundError(`Naloxone kit ${action.input.id} not found`);\n}\nstate.naloxoneKits?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-naloxone-kit-to-remove-not-found",
+                  "name": "NaloxoneKitToRemoveNotFoundError",
+                  "code": "NALOXONE_KIT_TO_REMOVE_NOT_FOUND",
+                  "description": "No naloxone kit with the given id to remove",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-log-drug-check",
+              "name": "LOG_DRUG_CHECK",
+              "description": "Logs a drug-checking result and what the user did about it",
+              "schema": "input LogDrugCheckInput {\n    id: OID!\n    checkedAt: DateTime!\n    expectedSubstance: String\n    testType: DrugTestType!\n    result: DrugTestResult!\n    actions: [HarmReductionAction!]\n    note: String\n}",
+              "template": "Logs a drug-checking result and what the user did about it",
+              "reducer": "const i = action.input;\n(state.drugChecks ??= []).push({ id: i.id, checkedAt: i.checkedAt, expectedSubstance: i.expectedSubstance?.trim() || null, testType: i.testType, result: i.result, actions: i.actions ?? [], note: i.note || null });",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-drug-check",
+              "name": "DELETE_DRUG_CHECK",
+              "description": "Deletes a drug-checking entry",
+              "schema": "input DeleteDrugCheckInput {\n    id: OID!\n}",
+              "template": "Deletes a drug-checking entry",
+              "reducer": "const index = (state.drugChecks ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new DrugCheckNotFoundError(`Drug check ${action.input.id} not found`);\n}\nstate.drugChecks?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-drug-check-not-found",
+                  "name": "DrugCheckNotFoundError",
+                  "code": "DRUG_CHECK_NOT_FOUND",
+                  "description": "No drug check with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-add-exclusion",
+              "name": "ADD_EXCLUSION",
+              "description": "Records a gambling self-exclusion or block (GAMSTOP, OASIS, bank block…)",
+              "schema": "input AddExclusionInput {\n    id: OID!\n    scheme: ExclusionScheme!\n    startDate: String!\n    endDate: String\n    note: String\n}",
+              "template": "Records a gambling self-exclusion or block (GAMSTOP, OASIS, bank block…)",
+              "reducer": "const i = action.input;\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.startDate) || (i.endDate != null && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.endDate) || i.endDate < i.startDate))) {\n  throw new InvalidExclusionError(\"Dates must be YYYY-MM-DD and the end date must not be before the start date\");\n}\n(state.exclusions ??= []).push({ id: i.id, scheme: i.scheme, startDate: i.startDate, endDate: i.endDate ?? null, note: i.note || null });",
+              "errors": [
+                {
+                  "id": "err-invalid-exclusion",
+                  "name": "InvalidExclusionError",
+                  "code": "INVALID_EXCLUSION",
+                  "description": "Exclusion dates are malformed or out of order",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-exclusion",
+              "name": "DELETE_EXCLUSION",
+              "description": "Deletes a self-exclusion record",
+              "schema": "input DeleteExclusionInput {\n    id: OID!\n}",
+              "template": "Deletes a self-exclusion record",
+              "reducer": "const index = (state.exclusions ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new ExclusionNotFoundError(`Exclusion ${action.input.id} not found`);\n}\nstate.exclusions?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-exclusion-not-found",
+                  "name": "ExclusionNotFoundError",
+                  "code": "EXCLUSION_NOT_FOUND",
+                  "description": "No exclusion with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-start-safety-check",
+              "name": "START_SAFETY_CHECK",
+              "description": "Starts a 'check on me' timer before using (private to this device)",
+              "schema": "input StartSafetyCheckInput {\n    id: OID!\n    startedAt: DateTime!\n    durationMinutes: Int!\n    note: String\n    contactIds: [OID!]\n}",
+              "template": "Starts a 'check on me' timer before using (private to this device)",
+              "reducer": "const i = action.input;\nif (!Number.isInteger(i.durationMinutes) || i.durationMinutes < 1 || i.durationMinutes > 240) {\n  throw new InvalidSafetyDurationError(\"Duration must be between 1 and 240 minutes\");\n}\nif ((state.safetyChecks ?? []).some((c) => c.outcome === \"ACTIVE\")) {\n  throw new SafetyCheckAlreadyActiveError(\"A safety check is already running\");\n}\n(state.safetyChecks ??= []).push({ id: i.id, startedAt: i.startedAt, durationMinutes: i.durationMinutes, note: i.note || null, contactIds: i.contactIds ?? [], endedAt: null, outcome: \"ACTIVE\" });",
+              "errors": [
+                {
+                  "id": "err-invalid-safety-duration",
+                  "name": "InvalidSafetyDurationError",
+                  "code": "INVALID_SAFETY_DURATION",
+                  "description": "Duration outside 1-240 minutes",
+                  "template": ""
+                },
+                {
+                  "id": "err-safety-check-already-active",
+                  "name": "SafetyCheckAlreadyActiveError",
+                  "code": "SAFETY_CHECK_ALREADY_ACTIVE",
+                  "description": "Another safety check is still active",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "local"
+            },
+            {
+              "id": "op-end-safety-check",
+              "name": "END_SAFETY_CHECK",
+              "description": "Ends a safety check: the user is OK, the alarm went off, or it was cancelled",
+              "schema": "input EndSafetyCheckInput {\n    id: OID!\n    endedAt: DateTime!\n    outcome: SafetyCheckOutcome!\n}",
+              "template": "Ends a safety check: the user is OK, the alarm went off, or it was cancelled",
+              "reducer": "const check = (state.safetyChecks ?? []).find((c) => c.id === action.input.id);\nif (!check) {\n  throw new SafetyCheckNotFoundError(`Safety check ${action.input.id} not found`);\n}\nif (check.outcome !== \"ACTIVE\" || action.input.outcome === \"ACTIVE\") {\n  throw new InvalidSafetyCheckEndError(\"Only an active check can be ended, and not with outcome ACTIVE\");\n}\ncheck.endedAt = action.input.endedAt;\ncheck.outcome = action.input.outcome;",
+              "errors": [
+                {
+                  "id": "err-safety-check-not-found",
+                  "name": "SafetyCheckNotFoundError",
+                  "code": "SAFETY_CHECK_NOT_FOUND",
+                  "description": "No safety check with the given id",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-safety-check-end",
+                  "name": "InvalidSafetyCheckEndError",
+                  "code": "INVALID_SAFETY_CHECK_END",
+                  "description": "Check is not active or the outcome is ACTIVE",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "local"
+            },
+            {
+              "id": "op-add-risky-place",
+              "name": "ADD_RISKY_PLACE",
+              "description": "Saves a high-risk place (private to this device) for location alerts",
+              "schema": "input AddRiskyPlaceInput {\n    id: OID!\n    label: String!\n    lat: Float!\n    lng: Float!\n    radiusM: Int!\n    planId: OID\n}",
+              "template": "Saves a high-risk place (private to this device) for location alerts",
+              "reducer": "const i = action.input;\nconst label = i.label.trim();\nif (!label || i.lat < -90 || i.lat > 90 || i.lng < -180 || i.lng > 180 || i.radiusM < 25 || i.radiusM > 5000) {\n  throw new InvalidRiskyPlaceError(\"A place needs a name, valid coordinates and a radius of 25-5000 m\");\n}\n(state.riskyPlaces ??= []).push({ id: i.id, label, lat: i.lat, lng: i.lng, radiusM: i.radiusM, planId: i.planId ?? null });",
+              "errors": [
+                {
+                  "id": "err-invalid-risky-place",
+                  "name": "InvalidRiskyPlaceError",
+                  "code": "INVALID_RISKY_PLACE",
+                  "description": "Missing name, bad coordinates or radius",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "local"
+            },
+            {
+              "id": "op-delete-risky-place",
+              "name": "DELETE_RISKY_PLACE",
+              "description": "Deletes a saved high-risk place",
+              "schema": "input DeleteRiskyPlaceInput {\n    id: OID!\n}",
+              "template": "Deletes a saved high-risk place",
+              "reducer": "const index = (state.riskyPlaces ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new RiskyPlaceNotFoundError(`Place ${action.input.id} not found`);\n}\nstate.riskyPlaces?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-risky-place-not-found",
+                  "name": "RiskyPlaceNotFoundError",
+                  "code": "RISKY_PLACE_NOT_FOUND",
+                  "description": "No place with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "local"
+            }
+          ]
+        },
+        {
+          "id": "mod-plans",
+          "name": "plans",
+          "description": "If-then plans (implementation intentions) shown when a matching craving is logged",
+          "operations": [
+            {
+              "id": "op-add-if-then-plan",
+              "name": "ADD_IF_THEN_PLAN",
+              "description": "Adds an if-then plan (implementation intention) for a trigger",
+              "schema": "input AddIfThenPlanInput {\n    id: OID!\n    trigger: CravingTrigger\n    ifText: String!\n    thenText: String!\n    strategy: CopingStrategy\n    createdAt: DateTime!\n}",
+              "template": "Adds an if-then plan (implementation intention) for a trigger",
+              "reducer": "const i = action.input;\nconst ifText = i.ifText.trim();\nconst thenText = i.thenText.trim();\nif (!ifText || !thenText) {\n  throw new InvalidIfThenPlanError(\"Both the 'if' and the 'then' part are needed\");\n}\n(state.ifThenPlans ??= []).push({ id: i.id, trigger: i.trigger ?? null, ifText, thenText, strategy: i.strategy ?? null, createdAt: i.createdAt, lastReviewedAt: null });",
+              "errors": [
+                {
+                  "id": "err-invalid-if-then-plan",
+                  "name": "InvalidIfThenPlanError",
+                  "code": "INVALID_IF_THEN_PLAN",
+                  "description": "If or then text is empty",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-update-if-then-plan",
+              "name": "UPDATE_IF_THEN_PLAN",
+              "description": "Edits an if-then plan",
+              "schema": "input UpdateIfThenPlanInput {\n    id: OID!\n    trigger: CravingTrigger\n    ifText: String!\n    thenText: String!\n    strategy: CopingStrategy\n}",
+              "template": "Edits an if-then plan",
+              "reducer": "const i = action.input;\nconst plan = (state.ifThenPlans ?? []).find((p) => p.id === i.id);\nif (!plan) {\n  throw new IfThenPlanNotFoundError(`Plan ${i.id} not found`);\n}\nconst ifText = i.ifText.trim();\nconst thenText = i.thenText.trim();\nif (!ifText || !thenText) {\n  throw new InvalidIfThenPlanUpdateError(\"Both the 'if' and the 'then' part are needed\");\n}\nplan.trigger = i.trigger ?? null;\nplan.ifText = ifText;\nplan.thenText = thenText;\nplan.strategy = i.strategy ?? null;",
+              "errors": [
+                {
+                  "id": "err-if-then-plan-not-found",
+                  "name": "IfThenPlanNotFoundError",
+                  "code": "IF_THEN_PLAN_NOT_FOUND",
+                  "description": "No plan with the given id",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-if-then-plan-update",
+                  "name": "InvalidIfThenPlanUpdateError",
+                  "code": "INVALID_IF_THEN_PLAN_UPDATE",
+                  "description": "If or then text is empty",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-review-if-then-plan",
+              "name": "REVIEW_IF_THEN_PLAN",
+              "description": "Marks an if-then plan as reviewed (plans work better when refreshed)",
+              "schema": "input ReviewIfThenPlanInput {\n    id: OID!\n    reviewedAt: DateTime!\n}",
+              "template": "Marks an if-then plan as reviewed (plans work better when refreshed)",
+              "reducer": "const plan = (state.ifThenPlans ?? []).find((p) => p.id === action.input.id);\nif (!plan) {\n  throw new IfThenPlanToReviewNotFoundError(`Plan ${action.input.id} not found`);\n}\nplan.lastReviewedAt = action.input.reviewedAt;",
+              "errors": [
+                {
+                  "id": "err-if-then-plan-to-review-not-found",
+                  "name": "IfThenPlanToReviewNotFoundError",
+                  "code": "IF_THEN_PLAN_TO_REVIEW_NOT_FOUND",
+                  "description": "No plan with the given id to review",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-if-then-plan",
+              "name": "DELETE_IF_THEN_PLAN",
+              "description": "Deletes an if-then plan",
+              "schema": "input DeleteIfThenPlanInput {\n    id: OID!\n}",
+              "template": "Deletes an if-then plan",
+              "reducer": "const index = (state.ifThenPlans ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new IfThenPlanToDeleteNotFoundError(`Plan ${action.input.id} not found`);\n}\nstate.ifThenPlans?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-if-then-plan-to-delete-not-found",
+                  "name": "IfThenPlanToDeleteNotFoundError",
+                  "code": "IF_THEN_PLAN_TO_DELETE_NOT_FOUND",
+                  "description": "No plan with the given id to delete",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        },
+        {
+          "id": "mod-tracking",
+          "name": "tracking",
+          "description": "Substance-specific tracking: drink diary with standard drinks, screen time, gambling losses",
+          "operations": [
+            {
+              "id": "op-log-drink",
+              "name": "LOG_DRINK",
+              "description": "Logs a drink; standard drinks are computed from volume, ABV and the plan's standard-drink size, and the drink is also logged as use",
+              "schema": "input LogDrinkInput {\n    id: OID!\n    slipId: OID!\n    timestamp: DateTime!\n    beverage: BeverageType!\n    volumeMl: Float!\n    abvPercent: Float!\n    note: String\n}",
+              "template": "Logs a drink; standard drinks are computed from volume, ABV and the plan's standard-drink size, and the drink is also logged as use",
+              "reducer": "const i = action.input;\nif (i.volumeMl <= 0 || i.volumeMl > 5000 || i.abvPercent <= 0 || i.abvPercent > 100) {\n  throw new InvalidDrinkError(\"Volume must be 1-5000 ml and ABV between 0 and 100 %\");\n}\n// Ethanol density 0.789 g/ml; standard-drink size defaults to the WHO's 10 g.\nconst gramsAlcohol = Math.round(i.volumeMl * (i.abvPercent / 100) * 0.789 * 10) / 10;\nconst standardDrinks = Math.round((gramsAlcohol / (state.plan?.standardDrinkGrams ?? 10)) * 10) / 10;\n(state.drinks ??= []).push({ id: i.id, timestamp: i.timestamp, beverage: i.beverage, volumeMl: i.volumeMl, abvPercent: i.abvPercent, gramsAlcohol, standardDrinks, slipId: i.slipId });\nstate.slips.push({ id: i.slipId, timestamp: i.timestamp, units: standardDrinks, trigger: null, note: i.note || null });",
+              "errors": [
+                {
+                  "id": "err-invalid-drink",
+                  "name": "InvalidDrinkError",
+                  "code": "INVALID_DRINK",
+                  "description": "Volume or ABV out of range",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-drink",
+              "name": "DELETE_DRINK",
+              "description": "Deletes a drink and the use it logged",
+              "schema": "input DeleteDrinkInput {\n    id: OID!\n}",
+              "template": "Deletes a drink and the use it logged",
+              "reducer": "const drinks = state.drinks ?? [];\nconst drink = drinks.find((d) => d.id === action.input.id);\nif (!drink) {\n  throw new DrinkNotFoundError(`Drink ${action.input.id} not found`);\n}\nstate.drinks = drinks.filter((d) => d.id !== drink.id);\nstate.slips = state.slips.filter((s) => s.id !== drink.slipId);",
+              "errors": [
+                {
+                  "id": "err-drink-not-found",
+                  "name": "DrinkNotFoundError",
+                  "code": "DRINK_NOT_FOUND",
+                  "description": "No drink with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-log-screen-time",
+              "name": "LOG_SCREEN_TIME",
+              "description": "Records minutes spent on the addictive app category for a calendar date (replaces that date's value)",
+              "schema": "input LogScreenTimeInput {\n    id: OID!\n    date: String!\n    minutes: Int!\n}",
+              "template": "Records minutes spent on the addictive app category for a calendar date (replaces that date's value)",
+              "reducer": "const i = action.input;\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.date) || !Number.isInteger(i.minutes) || i.minutes < 0 || i.minutes > 1440) {\n  throw new InvalidScreenTimeError(\"Date must be YYYY-MM-DD and minutes 0-1440\");\n}\nconst list = (state.screenTime ??= []);\nconst existing = list.find((e) => e.date === i.date);\nif (existing) {\n  existing.minutes = i.minutes;\n} else {\n  list.push({ id: i.id, date: i.date, minutes: i.minutes });\n}",
+              "errors": [
+                {
+                  "id": "err-invalid-screen-time",
+                  "name": "InvalidScreenTimeError",
+                  "code": "INVALID_SCREEN_TIME",
+                  "description": "Malformed date or minutes out of range",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-log-gambling-loss",
+              "name": "LOG_GAMBLING_LOSS",
+              "description": "Records money lost gambling on a date",
+              "schema": "input LogGamblingLossInput {\n    id: OID!\n    date: String!\n    amount: Float!\n    note: String\n}",
+              "template": "Records money lost gambling on a date",
+              "reducer": "const i = action.input;\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.date) || i.amount <= 0) {\n  throw new InvalidGamblingLossError(\"Date must be YYYY-MM-DD and the amount above 0\");\n}\n(state.gamblingLosses ??= []).push({ id: i.id, date: i.date, amount: i.amount, note: i.note || null });",
+              "errors": [
+                {
+                  "id": "err-invalid-gambling-loss",
+                  "name": "InvalidGamblingLossError",
+                  "code": "INVALID_GAMBLING_LOSS",
+                  "description": "Malformed date or non-positive amount",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-gambling-loss",
+              "name": "DELETE_GAMBLING_LOSS",
+              "description": "Deletes a gambling-loss entry",
+              "schema": "input DeleteGamblingLossInput {\n    id: OID!\n}",
+              "template": "Deletes a gambling-loss entry",
+              "reducer": "const index = (state.gamblingLosses ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new GamblingLossNotFoundError(`Loss ${action.input.id} not found`);\n}\nstate.gamblingLosses?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-gambling-loss-not-found",
+                  "name": "GamblingLossNotFoundError",
+                  "code": "GAMBLING_LOSS_NOT_FOUND",
+                  "description": "No loss with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        },
+        {
+          "id": "mod-assessments",
+          "name": "assessments",
+          "description": "Validated screening and withdrawal scales with reducer-computed scores",
+          "operations": [
+            {
+              "id": "op-record-assessment",
+              "name": "RECORD_ASSESSMENT",
+              "description": "Records a completed screening or withdrawal scale; the reducer validates answers and computes the score",
+              "schema": "input RecordAssessmentInput {\n    id: OID!\n    instrument: AssessmentInstrument!\n    takenAt: DateTime!\n    answers: [Int!]!\n}",
+              "template": "Records a completed screening or withdrawal scale; the reducer validates answers and computes the score",
+              "reducer": "const i = action.input;\n// [number of items, lowest answer, highest answer] per instrument.\nconst shape: Record<string, [number, number, number]> = {\n  AUDIT_C: [3, 0, 4], AUDIT: [10, 0, 4], HSI: [2, 0, 3], CUDIT_R: [8, 0, 4], PGSI: [9, 0, 3],\n  BARC_10: [10, 1, 6], SOWS: [16, 0, 4], SAWS: [10, 0, 3], CWS: [19, 0, 10], ACSA: [16, 0, 4],\n};\nconst [count, min, max] = shape[i.instrument];\nif (i.answers.length !== count || i.answers.some((a) => !Number.isInteger(a) || a < min || a > max)) {\n  throw new InvalidAssessmentAnswersError(`${i.instrument} needs ${count} answers between ${min} and ${max}`);\n}\n(state.assessments ??= []).push({ id: i.id, instrument: i.instrument, takenAt: i.takenAt, answers: i.answers, score: i.answers.reduce((sum, a) => sum + a, 0) });",
+              "errors": [
+                {
+                  "id": "err-invalid-assessment-answers",
+                  "name": "InvalidAssessmentAnswersError",
+                  "code": "INVALID_ASSESSMENT_ANSWERS",
+                  "description": "Wrong number of answers or an answer out of range",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-delete-assessment",
+              "name": "DELETE_ASSESSMENT",
+              "description": "Deletes an assessment",
+              "schema": "input DeleteAssessmentInput {\n    id: OID!\n}",
+              "template": "Deletes an assessment",
+              "reducer": "const index = (state.assessments ?? []).findIndex((x) => x.id === action.input.id);\nif (index === -1) {\n  throw new AssessmentNotFoundError(`Assessment ${action.input.id} not found`);\n}\nstate.assessments?.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-assessment-not-found",
+                  "name": "AssessmentNotFoundError",
+                  "code": "ASSESSMENT_NOT_FOUND",
+                  "description": "No assessment with the given id",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        },
+        {
+          "id": "mod-medication",
+          "name": "medication",
+          "description": "Clinician-provided dose schedules and take-home dose tracking (tracking only, never dosing advice)",
+          "operations": [
+            {
+              "id": "op-set-medication-plan",
+              "name": "SET_MEDICATION_PLAN",
+              "description": "Stores a dose schedule for a quit aid exactly as given by a clinician or leaflet (replaces that aid's plan); the app never calculates doses",
+              "schema": "input DoseStepInput {\n    id: OID!\n    fromDay: Int!\n    dose: String!\n    timesPerDay: Int!\n}\n\ninput SetMedicationPlanInput {\n    id: OID!\n    aidId: OID!\n    source: MedicationPlanSource!\n    startDate: String!\n    steps: [DoseStepInput!]!\n    note: String\n}",
+              "template": "Stores a dose schedule for a quit aid exactly as given by a clinician or leaflet (replaces that aid's plan); the app never calculates doses",
+              "reducer": "const i = action.input;\nif (!state.aids.some((a) => a.id === i.aidId)) {\n  throw new MedicationAidNotFoundError(`Quit aid ${i.aidId} not found`);\n}\nconst ordered = i.steps.every((s, n) => n === 0 || s.fromDay > i.steps[n - 1].fromDay);\nconst valid = i.steps.every((s) => Number.isInteger(s.fromDay) && s.fromDay >= 1 && s.dose.trim() !== \"\" && Number.isInteger(s.timesPerDay) && s.timesPerDay >= 1);\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.startDate) || i.steps.length === 0 || i.steps[0].fromDay !== 1 || !ordered || !valid) {\n  throw new InvalidMedicationPlanError(\"A plan needs a YYYY-MM-DD start date and steps starting on day 1 in increasing day order, each with a dose and at least one time per day\");\n}\nconst plans = (state.medicationPlans ??= []).filter((p) => p.aidId !== i.aidId);\nplans.push({ id: i.id, aidId: i.aidId, source: i.source, startDate: i.startDate, steps: i.steps.map((s) => ({ id: s.id, fromDay: s.fromDay, dose: s.dose.trim(), timesPerDay: s.timesPerDay })), note: i.note || null });\nstate.medicationPlans = plans;",
+              "errors": [
+                {
+                  "id": "err-medication-aid-not-found",
+                  "name": "MedicationAidNotFoundError",
+                  "code": "MEDICATION_AID_NOT_FOUND",
+                  "description": "The referenced quit aid does not exist",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-medication-plan",
+                  "name": "InvalidMedicationPlanError",
+                  "code": "INVALID_MEDICATION_PLAN",
+                  "description": "Start date or steps are invalid",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-clear-medication-plan",
+              "name": "CLEAR_MEDICATION_PLAN",
+              "description": "Removes the dose schedule of a quit aid",
+              "schema": "input ClearMedicationPlanInput {\n    aidId: OID!\n}",
+              "template": "Removes the dose schedule of a quit aid",
+              "reducer": "const plans = state.medicationPlans ?? [];\nif (!plans.some((p) => p.aidId === action.input.aidId)) {\n  throw new MedicationPlanNotFoundError(`No plan for quit aid ${action.input.aidId}`);\n}\nstate.medicationPlans = plans.filter((p) => p.aidId !== action.input.aidId);",
+              "errors": [
+                {
+                  "id": "err-medication-plan-not-found",
+                  "name": "MedicationPlanNotFoundError",
+                  "code": "MEDICATION_PLAN_NOT_FOUND",
+                  "description": "The quit aid has no plan",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-record-take-home",
+              "name": "RECORD_TAKE_HOME",
+              "description": "Records take-home doses picked up (e.g. methadone) so the app can count remaining doses",
+              "schema": "input RecordTakeHomeInput {\n    id: OID!\n    aidId: OID!\n    pickedUpOn: String!\n    doses: Int!\n}",
+              "template": "Records take-home doses picked up (e.g. methadone) so the app can count remaining doses",
+              "reducer": "const i = action.input;\nif (!state.aids.some((a) => a.id === i.aidId)) {\n  throw new TakeHomeAidNotFoundError(`Quit aid ${i.aidId} not found`);\n}\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(i.pickedUpOn) || !Number.isInteger(i.doses) || i.doses < 1 || i.doses > 31) {\n  throw new InvalidTakeHomeError(\"Pick-up date must be YYYY-MM-DD and doses 1-31\");\n}\n(state.takeHomes ??= []).push({ id: i.id, aidId: i.aidId, pickedUpOn: i.pickedUpOn, doses: i.doses });",
+              "errors": [
+                {
+                  "id": "err-take-home-aid-not-found",
+                  "name": "TakeHomeAidNotFoundError",
+                  "code": "TAKE_HOME_AID_NOT_FOUND",
+                  "description": "The referenced quit aid does not exist",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-take-home",
+                  "name": "InvalidTakeHomeError",
+                  "code": "INVALID_TAKE_HOME",
+                  "description": "Malformed date or dose count",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        },
+        {
+          "id": "mod-programs",
+          "name": "programs",
+          "description": "Structured programs with missions and lessons",
+          "operations": [
+            {
+              "id": "op-start-program",
+              "name": "START_PROGRAM",
+              "description": "Starts a structured program (quit vaping, daily missions, dry month, cannabis break, skill lessons)",
+              "schema": "input StartProgramInput {\n    id: OID!\n    program: ProgramKey!\n    startedAt: DateTime!\n}",
+              "template": "Starts a structured program (quit vaping, daily missions, dry month, cannabis break, skill lessons)",
+              "reducer": "const i = action.input;\nif ((state.programs ?? []).some((p) => p.program === i.program && !p.endedAt)) {\n  throw new ProgramAlreadyActiveError(`${i.program} is already running`);\n}\n(state.programs ??= []).push({ id: i.id, program: i.program, startedAt: i.startedAt, completedMissions: [], endedAt: null });",
+              "errors": [
+                {
+                  "id": "err-program-already-active",
+                  "name": "ProgramAlreadyActiveError",
+                  "code": "PROGRAM_ALREADY_ACTIVE",
+                  "description": "That program is already running",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-complete-mission",
+              "name": "COMPLETE_MISSION",
+              "description": "Marks a program mission or lesson as done",
+              "schema": "input CompleteMissionInput {\n    programId: OID!\n    missionKey: String!\n}",
+              "template": "Marks a program mission or lesson as done",
+              "reducer": "const program = (state.programs ?? []).find((p) => p.id === action.input.programId);\nif (!program) {\n  throw new ProgramNotFoundError(`Program ${action.input.programId} not found`);\n}\nif (program.endedAt) {\n  throw new ProgramNotActiveError(\"The program has ended\");\n}\nif (!program.completedMissions.includes(action.input.missionKey)) {\n  program.completedMissions.push(action.input.missionKey);\n}",
+              "errors": [
+                {
+                  "id": "err-program-not-found",
+                  "name": "ProgramNotFoundError",
+                  "code": "PROGRAM_NOT_FOUND",
+                  "description": "No program with the given id",
+                  "template": ""
+                },
+                {
+                  "id": "err-program-not-active",
+                  "name": "ProgramNotActiveError",
+                  "code": "PROGRAM_NOT_ACTIVE",
+                  "description": "The program has already ended",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "op-end-program",
+              "name": "END_PROGRAM",
+              "description": "Ends a program (finished or stopped)",
+              "schema": "input EndProgramInput {\n    programId: OID!\n    endedAt: DateTime!\n}",
+              "template": "Ends a program (finished or stopped)",
+              "reducer": "const program = (state.programs ?? []).find((p) => p.id === action.input.programId);\nif (!program) {\n  throw new ProgramToEndNotFoundError(`Program ${action.input.programId} not found`);\n}\nif (program.endedAt) {\n  throw new ProgramAlreadyEndedError(\"The program has already ended\");\n}\nprogram.endedAt = action.input.endedAt;",
+              "errors": [
+                {
+                  "id": "err-program-to-end-not-found",
+                  "name": "ProgramToEndNotFoundError",
+                  "code": "PROGRAM_TO_END_NOT_FOUND",
+                  "description": "No program with the given id to end",
+                  "template": ""
+                },
+                {
+                  "id": "err-program-already-ended",
+                  "name": "ProgramAlreadyEndedError",
+                  "code": "PROGRAM_ALREADY_ENDED",
+                  "description": "The program has already ended",
+                  "template": ""
+                }
+              ],
               "examples": [],
               "scope": "global"
             }

@@ -49,6 +49,7 @@ export function storedPlan(overrides: Partial<SetQuitPlanInput> = {}) {
     unitLabel: null,
     goal: null,
     dailyLimit: null,
+    standardDrinkGrams: null,
     ...planInput(overrides),
   };
 }
@@ -59,4 +60,37 @@ export const withPlan = (overrides: Partial<SetQuitPlanInput> = {}) =>
 /** A plain state object for engine tests (bypasses action validation). */
 export function makeState(overrides: Partial<QuitJourneyState> = {}): QuitJourneyState {
   return { ...utils.createDocument().state.global, ...overrides };
+}
+
+/** The error of every local operation, null for successful ones. */
+export function localErrs(doc: QuitJourneyDocument): (string | null)[] {
+  return doc.operations.local.map((o) => o.error ?? null);
+}
+
+/** Global collections added with the harm-reduction / toolkit modules. */
+export const TOOLKIT_COLLECTIONS = [
+  "naloxoneKits",
+  "drugChecks",
+  "exclusions",
+  "ifThenPlans",
+  "drinks",
+  "screenTime",
+  "gamblingLosses",
+  "assessments",
+  "medicationPlans",
+  "takeHomes",
+  "programs",
+] as const;
+
+/**
+ * A document as stored before the toolkit modules existed: loaded from JSON with
+ * none of the new global collections and an empty local state.
+ */
+export function legacyToolkitDocument(): QuitJourneyDocument {
+  const json = JSON.parse(JSON.stringify(utils.createDocument())) as {
+    state: { global: Record<string, unknown>; local: Record<string, unknown> };
+  };
+  for (const key of TOOLKIT_COLLECTIONS) delete json.state.global[key];
+  json.state.local = {};
+  return json as unknown as QuitJourneyDocument;
 }

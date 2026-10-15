@@ -38,7 +38,7 @@ The full program
 • Reminders for check-ins and recovery milestones
 
 Private by design
-No account, no ads, no tracking. Your journeys are stored only on your phone. Save a backup file whenever you like.
+No account, no ads, no tracking. Your journeys are stored only on your phone. Save a backup file whenever you like. Lock the app with a PIN, and switch to a discreet "Notes" icon on your home screen if others use your phone.
 
 Quit Journey supports your recovery; it isn't medical advice or treatment. Talk to a doctor about medication and before stopping alcohol or benzodiazepines after heavy use. In an emergency, call your local emergency number.
 

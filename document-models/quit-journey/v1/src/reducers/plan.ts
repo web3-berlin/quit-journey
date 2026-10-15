@@ -9,7 +9,13 @@ import {
 export const quitJourneyPlanOperations: QuitJourneyPlanOperations = {
   setQuitPlanOperation(state, action) {
     const i = action.input;
-    if (i.unitsPerDay <= 0 || i.unitsPerPack <= 0 || i.packPrice < 0) {
+    if (
+      i.unitsPerDay <= 0 ||
+      i.unitsPerPack <= 0 ||
+      i.packPrice < 0 ||
+      (i.standardDrinkGrams != null &&
+        (i.standardDrinkGrams < 5 || i.standardDrinkGrams > 30))
+    ) {
       throw new InvalidQuitPlanError(
         "unitsPerDay and unitsPerPack must be positive and packPrice must not be negative",
       );
@@ -39,6 +45,7 @@ export const quitJourneyPlanOperations: QuitJourneyPlanOperations = {
       unitLabel: i.unitLabel?.trim() || null,
       goal: i.goal ?? null,
       dailyLimit,
+      standardDrinkGrams: i.standardDrinkGrams ?? null,
     };
   },
   setDisplayNameOperation(state, action) {

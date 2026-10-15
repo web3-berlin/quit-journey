@@ -7,9 +7,11 @@ import type { TabProps } from "../lib/types.js";
 import { CheckInForm } from "./CheckInForm.js";
 import { PlanForm } from "./PlanForm.js";
 import { SafetyNotes } from "./SafetyNotes.js";
+import { TodayCards } from "./toolkit/TodayCards.js";
 import { Meter, Ring } from "./ui.js";
 
-export function TodayTab({ state, snapshot, dispatch }: TabProps) {
+export function TodayTab(props: TabProps) {
+  const { state, snapshot, dispatch } = props;
   const [checkingIn, setCheckingIn] = useState(false);
   const [useAmount, setUseAmount] = useState("1");
   const { money, gamification, streaks, insights, prep, profile, reduction } = snapshot;
@@ -39,6 +41,8 @@ export function TodayTab({ state, snapshot, dispatch }: TabProps) {
   return (
     <div className="stack-lg">
       <SafetyNotes notes={critical} collapsed={snapshot.elapsedMs > 7 * 24 * 3_600_000} />
+
+      {snapshot.phase === "QUIT" && <TodayCards {...props} />}
 
       {reduction && snapshot.phase === "QUIT" && (
         <section className="panel tint-leaf stack">

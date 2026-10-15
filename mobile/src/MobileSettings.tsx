@@ -2,7 +2,11 @@ import { useRef, useState } from "react";
 import { exportBackup, InvalidBackupError, readBackup } from "./backup.js";
 import type { QuitJourneyDocument } from "./core.js";
 import { journeyName } from "./JourneySwitcher.js";
+import type { HostCapabilities } from "../../editors/quit-journey-editor/lib/host.js";
+import { MeetingsSettings } from "./MeetingsSettings.js";
 import { isNative, requestPermission, type NotifySettings } from "./notifications.js";
+import { PrivacySettings } from "./PrivacySettings.js";
+import { ScreenTimeSettings } from "./ScreenTimeSettings.js";
 
 interface Props {
   doc: QuitJourneyDocument;
@@ -11,9 +15,10 @@ interface Props {
   onSettings: (s: NotifySettings) => void;
   onRestore: (doc: QuitJourneyDocument) => void;
   onDelete: () => void;
+  host: HostCapabilities;
 }
 
-export function MobileSettings({ doc, journeyCount, settings, onSettings, onRestore, onDelete }: Props) {
+export function MobileSettings({ doc, journeyCount, settings, onSettings, onRestore, onDelete, host }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
   const [pendingRestore, setPendingRestore] = useState<QuitJourneyDocument | null>(null);
@@ -60,6 +65,12 @@ export function MobileSettings({ doc, journeyCount, settings, onSettings, onRest
           <p className="muted">Notifications are available in the Android app.</p>
         )}
       </section>
+
+      {host.privacy && <PrivacySettings privacy={host.privacy} />}
+
+      {host.screenTimeToday && host.requestUsageAccess && <ScreenTimeSettings screenTimeToday={host.screenTimeToday} requestUsageAccess={host.requestUsageAccess} />}
+
+      {host.fetchJson && <MeetingsSettings fetchJson={host.fetchJson} />}
 
       <section className="stack">
         <h3>Backup</h3>

@@ -107,7 +107,7 @@ describe("QuitJourney full journey scenario", () => {
       claimReward({ id: ids.book, claimedAt: addDays(QUIT, 5) }), // 23 48 - 25 = 23 >= 15
       addQuitAid({ id: ids.patch, type: "PATCH", name: "NicoPatch", dosage: "21mg", startedAt: QUIT }), // 24
       addQuitAid({ id: ids.gum, type: "GUM", startedAt: QUIT }), // 25
-      logAidUse({ id: ids.use1, aidId: ids.gum, timestamp: addDays(QUIT, 1), note: "after lunch" }), // 26
+      logAidUse({ id: ids.use1, aidId: ids.gum, timestamp: addDays(QUIT, 1), note: "after lunch", beforeDrinking: null }), // 26
       logAidUse({ id: ids.use2, aidId: ids.gum, timestamp: addDays(QUIT, 2) }), // 27
       endQuitAid({ id: ids.patch, endedAt: addDays(QUIT, 8) }), // 28
       addSupportContact({ id: ids.mum, name: "  Mum ", phone: "+49 123", relation: "Family" }), // 29
@@ -152,6 +152,7 @@ describe("QuitJourney full journey scenario", () => {
         outcome: "RESISTED",
         durationMinutes: 7,
         note: "tough one",
+        intensityAfter: null,
       },
     ]);
     expect(s.slips.map((x) => x.id)).toEqual([ids.slip1, ids.slipGap, ids.slip3]);
@@ -180,8 +181,8 @@ describe("QuitJourney full journey scenario", () => {
       { id: ids.gum, type: "GUM", name: null, dosage: null, startedAt: QUIT, endedAt: null },
     ]);
     expect(s.aidUses).toEqual([
-      { id: ids.use1, aidId: ids.gum, timestamp: addDays(QUIT, 1), note: "after lunch" },
-      { id: ids.use2, aidId: ids.gum, timestamp: addDays(QUIT, 2), note: null },
+      { id: ids.use1, aidId: ids.gum, timestamp: addDays(QUIT, 1), note: "after lunch", beforeDrinking: null },
+      { id: ids.use2, aidId: ids.gum, timestamp: addDays(QUIT, 2), note: null, beforeDrinking: null },
     ]);
     expect(s.supportContacts).toEqual([{ id: ids.mum, name: "Mum", phone: "+49 123", relation: "Family" }]);
     expect(s.quitlinePhone).toBe("0800 123");

@@ -1,9 +1,10 @@
 import { generateId } from "document-model";
-import { actions, type CopingStrategy, type CravingOutcome, type CravingTrigger, type SubstanceProfile } from "document-models/quit-journey";
+import { actions, plansForTrigger, type CopingStrategy, type CravingOutcome, type CravingTrigger, type IfThenPlan, type SubstanceProfile } from "document-models/quit-journey";
 import { useState } from "react";
 import { entries, STRATEGY_LABELS, TRIGGER_LABELS } from "../lib/labels.js";
 import type { Dispatch } from "../lib/types.js";
 import { SafetyNotes } from "./SafetyNotes.js";
+import { PlanCard } from "./toolkit/IfThenPlans.js";
 import { Field, Scale, Select } from "./ui.js";
 
 interface Props {
@@ -12,13 +13,15 @@ interface Props {
   profile: SubstanceProfile;
   /** True when the goal is cutting down, so use is expected rather than a slip. */
   reducing: boolean;
+  /** If-then plans; the one matching the chosen trigger is shown. */
+  plans?: IfThenPlan[];
   /** Prefilled from the SOS screen. */
   initialStrategy?: CopingStrategy | null;
   initialDurationMinutes?: number | null;
   onDone: () => void;
 }
 
-export function CravingLogForm({ dispatch, now, profile, reducing, initialStrategy, initialDurationMinutes, onDone }: Props) {
+export function CravingLogForm({ dispatch, now, profile, reducing, plans = [], initialStrategy, initialDurationMinutes, onDone }: Props) {
   const [intensity, setIntensity] = useState<number | null>(3);
   const [trigger, setTrigger] = useState<CravingTrigger | "">("");
   const [strategy, setStrategy] = useState<CopingStrategy | "">(initialStrategy ?? "");
@@ -56,6 +59,9 @@ export function CravingLogForm({ dispatch, now, profile, reducing, initialStrate
           <Select value={strategy} options={entries(STRATEGY_LABELS)} onChange={setStrategy} allowEmpty="Nothing in particular" />
         </Field>
       </div>
+      {trigger && plansForTrigger(plans, trigger).slice(0, 1).map((p) => (
+        <div key={p.id} className="panel tint-amber"><p className="soft">Your plan for this:</p><PlanCard plan={p} /></div>
+      ))}
       <div className="chips" role="group" aria-label="Outcome">
         <button type="button" className="chip" aria-pressed={outcome === "RESISTED"} onClick={() => setOutcome("RESISTED")}>I resisted it</button>
         <button type="button" className="chip" aria-pressed={outcome === "SMOKED"} onClick={() => setOutcome("SMOKED")}>I used</button>

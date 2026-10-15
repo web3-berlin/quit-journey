@@ -48,6 +48,7 @@ function plan(quitAt: number, overrides: Partial<QuitPlan> = {}): QuitPlan {
     unitLabel: null,
     goal: null,
     dailyLimit: null,
+    standardDrinkGrams: null,
     ...overrides,
   };
 }
@@ -67,6 +68,7 @@ function craving(
     strategy: opts.strategy ?? null,
     outcome,
     durationMinutes: opts.duration ?? null,
+    intensityAfter: null,
     note: null,
   };
 }
@@ -300,7 +302,7 @@ describe("gamification", () => {
       ],
       checkIns: [checkIn(today), checkIn(shiftDateKey(today, -1))],
       rewards: [{ id: "r", title: "R", cost: 5, emoji: null, claimedAt: iso(NOW - DAY) }],
-      aidUses: [{ id: "u", aidId: "x", timestamp: iso(quit), note: null }],
+      aidUses: [{ id: "u", aidId: "x", timestamp: iso(quit), note: null, beforeDrinking: null }],
       supportContacts: [{ id: "p", name: "P", phone: null, relation: null }],
     });
     const g = computeJourney(state, NOW).gamification;

@@ -1,4 +1,4 @@
-import { computeJourney, type QuitJourneyState } from "document-models/quit-journey";
+import { computeJourney, type QuitJourneyLocalState, type QuitJourneyState } from "document-models/quit-journey";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BadgesTab } from "./components/BadgesTab.js";
 import { CravingsTab } from "./components/CravingsTab.js";
@@ -9,6 +9,9 @@ import { RewardsTab } from "./components/RewardsTab.js";
 import { SkyHero } from "./components/SkyHero.js";
 import { SosOverlay } from "./components/SosOverlay.js";
 import { TodayTab } from "./components/TodayTab.js";
+import { ToolkitTab } from "./components/toolkit/ToolkitTab.js";
+import { RiskyPlaceBanner } from "./components/RiskyPlaceBanner.js";
+import type { HostCapabilities } from "./lib/host.js";
 import type { Dispatch, TabProps } from "./lib/types.js";
 import { useNow } from "./lib/useNow.js";
 import { styles } from "./styles.js";
@@ -17,6 +20,7 @@ const TABS = [
   { key: "today", label: "Today", Component: TodayTab },
   { key: "health", label: "Health", Component: HealthTab },
   { key: "cravings", label: "Cravings", Component: CravingsTab },
+  { key: "toolkit", label: "Toolkit", Component: ToolkitTab },
   { key: "rewards", label: "Rewards", Component: RewardsTab },
   { key: "badges", label: "Badges", Component: BadgesTab },
   { key: "insights", label: "Insights", Component: InsightsTab },
@@ -30,7 +34,11 @@ export type BackHandler = () => boolean;
 
 export interface QuitJourneyAppProps {
   state: QuitJourneyState;
+  /** Device-private state; defaults to empty. */
+  local?: QuitJourneyLocalState;
   dispatch: Dispatch;
+  /** Native capabilities offered by the host (alarms, location, screen time…). */
+  host?: HostCapabilities;
   /** Rendered above the hero (Connect puts its DocumentToolbar here). */
   toolbar?: ReactNode;
   /** Host-specific settings shown at the end of the "My plan" tab. */
@@ -39,8 +47,11 @@ export interface QuitJourneyAppProps {
   registerBackHandler?: (handler: BackHandler) => () => void;
 }
 
+const NO_HOST: HostCapabilities = {};
+const NO_LOCAL: QuitJourneyLocalState = { safetyChecks: null, riskyPlaces: null };
+
 /** The whole Quit Journey experience, independent of where the document lives. */
-export function QuitJourneyApp({ state, dispatch, toolbar, settings, registerBackHandler }: QuitJourneyAppProps) {
+export function QuitJourneyApp({ state, local = NO_LOCAL, dispatch, host = NO_HOST, toolbar, settings, registerBackHandler }: QuitJourneyAppProps) {
   const now = useNow();
   const snapshot = useMemo(() => computeJourney(state, now), [state, now]);
   const [tab, setTab] = useState<TabKey>("today");
@@ -61,7 +72,7 @@ export function QuitJourneyApp({ state, dispatch, toolbar, settings, registerBac
     });
   }, [registerBackHandler, sos, tab]);
 
-  const props: TabProps = { state, snapshot, dispatch };
+  const props: TabProps = { state, local, snapshot, dispatch, host };
   const Active = TABS.find((t) => t.key === tab)?.Component ?? TodayTab;
 
   return (
@@ -77,6 +88,7 @@ export function QuitJourneyApp({ state, dispatch, toolbar, settings, registerBac
             </button>
           ))}
         </nav>
+        <RiskyPlaceBanner {...props} />
         <main style={{ marginTop: 24 }} role="tabpanel">
           <Active {...props} />
           {tab === "plan" && settings && <div style={{ marginTop: 28 }}>{settings}</div>}

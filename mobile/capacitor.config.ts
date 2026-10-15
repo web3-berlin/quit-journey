@@ -15,6 +15,10 @@ const config: CapacitorConfig = {
       initialViewportFitValueHint: "cover",
       style: "LIGHT",
     },
+    // Native HTTP for meeting feeds (code4recovery JSON), which rarely send CORS headers.
+    CapacitorHttp: {
+      enabled: true,
+    },
     LocalNotifications: {
       smallIcon: "ic_stat_quit",
       iconColor: "#2F9E62",

@@ -33,6 +33,7 @@ export const quitJourneyAidsOperations: QuitJourneyAidsOperations = {
       aidId: i.aidId,
       timestamp: i.timestamp,
       note: i.note || null,
+      beforeDrinking: i.beforeDrinking ?? null,
     });
   },
 };

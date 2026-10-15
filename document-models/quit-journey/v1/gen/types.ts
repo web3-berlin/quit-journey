@@ -4,9 +4,10 @@
  */
 import type { PHBaseState, PHDocument } from "document-model";
 import type { QuitJourneyAction } from "./actions.js";
-import type { QuitJourneyState as QuitJourneyGlobalState } from "./schema/types.js";
-
-type QuitJourneyLocalState = Record<PropertyKey, never>;
+import type {
+  QuitJourneyState as QuitJourneyGlobalState,
+  QuitJourneyLocalState,
+} from "./schema/types.js";
 
 type QuitJourneyPHState = PHBaseState & {
   global: QuitJourneyGlobalState;

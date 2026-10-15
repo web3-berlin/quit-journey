@@ -4,7 +4,22 @@ The phone app around the shared Quit Journey UI (`editors/quit-journey-editor/Qu
 It runs the real document-model reducer locally and stores each journey (one per addiction) in app-private storage, so it works fully offline with no account. Version 1.0 data (`quit-journey.json`) is migrated automatically into the journey index on first launch.
 
 - **App ID:** `com.w3b.quitjourney` — permanent after the first Play upload. Change it in `capacitor.config.ts` and `android/app/build.gradle` *before* that if you want another one.
-- **Stack:** Vite + React, Capacitor 8 (target SDK 36), local notifications, filesystem, share.
+- **Stack:** Vite + React, Capacitor 8 (target SDK 36), local notifications, filesystem, share, geolocation, CapacitorHttp, plus the app's own plugin `QjNative` (`android/app/src/main/java/com/w3b/quitjourney/QjNativePlugin.java`).
+
+## Native capabilities (`src/host.ts`)
+
+`useHost()` implements the shared UI's `HostCapabilities` (`editors/quit-journey-editor/lib/host.ts`); `main.tsx` passes it and the document's `local` state to `QuitJourneyApp`.
+
+| Capability | How |
+|---|---|
+| Safety alarms | Local notification on the `safety` channel (importance 5, vibration, `res/raw/safety_alarm.wav`), **exact** + allow-while-idle (needs the user-granted *Alarms & reminders* access, requested on the first check; falls back to inexact with an in-app warning). All other reminders are inexact. Ids 900000–999999 (hash of the check id); `syncNotifications` never cancels that range. |
+| Message a contact | `QjNative.composeSms` → `ACTION_SENDTO smsto:` with the body prefilled. Never sends; no SMS permission. |
+| Position | `@capacitor/geolocation`, foreground only (coarse/fine, no background location). |
+| Screen time | `QjNative` reads `UsageStatsManager` events since midnight for the apps picked in *My plan → Screen time* (package list in `localStorage`); null without usage access. |
+| Share / meeting feeds | `@capacitor/share`; `CapacitorHttp` (enabled in `capacitor.config.ts`) for code4recovery JSON feeds, https only. |
+| Privacy | PIN (salted SHA-256 in `localStorage`, `src/privacy.ts`) gates the app on launch and after >1 min in the background (`LockScreen.tsx`); the disguised icon swaps the enabled launcher `activity-alias` (`.LauncherDefault` ↔ `.LauncherNotes`). |
+
+Mobile-only settings (Privacy, Screen time, Meetings) live in `src/MobileSettings.tsx` and its section components.
 
 ## Everyday commands
 

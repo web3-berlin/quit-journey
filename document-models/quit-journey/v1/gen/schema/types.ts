@@ -62,10 +62,35 @@ export type Scalars = {
   Upload: { input: File; output: File };
 };
 
+export type AddExclusionInput = {
+  endDate?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+  scheme: ExclusionScheme;
+  startDate: Scalars["String"]["input"];
+};
+
+export type AddIfThenPlanInput = {
+  createdAt: Scalars["DateTime"]["input"];
+  id: Scalars["OID"]["input"];
+  ifText: Scalars["String"]["input"];
+  strategy?: InputMaybe<CopingStrategy>;
+  thenText: Scalars["String"]["input"];
+  trigger?: InputMaybe<CravingTrigger>;
+};
+
 export type AddMotivationInput = {
   id: Scalars["OID"]["input"];
   imageUrl?: InputMaybe<Scalars["URL"]["input"]>;
   text: Scalars["String"]["input"];
+};
+
+export type AddNaloxoneKitInput = {
+  addedAt: Scalars["DateTime"]["input"];
+  expiresOn?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  kind: NaloxoneKind;
+  location?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type AddQuitAidInput = {
@@ -83,6 +108,15 @@ export type AddRewardGoalInput = {
   title: Scalars["String"]["input"];
 };
 
+export type AddRiskyPlaceInput = {
+  id: Scalars["OID"]["input"];
+  label: Scalars["String"]["input"];
+  lat: Scalars["Float"]["input"];
+  lng: Scalars["Float"]["input"];
+  planId?: InputMaybe<Scalars["OID"]["input"]>;
+  radiusM: Scalars["Int"]["input"];
+};
+
 export type AddSupportContactInput = {
   id: Scalars["OID"]["input"];
   name: Scalars["String"]["input"];
@@ -92,10 +126,39 @@ export type AddSupportContactInput = {
 
 export type AidUse = {
   aidId: Scalars["OID"]["output"];
+  beforeDrinking: Maybe<Scalars["Boolean"]["output"]>;
   id: Scalars["OID"]["output"];
   note: Maybe<Scalars["String"]["output"]>;
   timestamp: Scalars["DateTime"]["output"];
 };
+
+export type Assessment = {
+  answers: Array<Scalars["Int"]["output"]>;
+  id: Scalars["OID"]["output"];
+  instrument: AssessmentInstrument;
+  score: Scalars["Int"]["output"];
+  takenAt: Scalars["DateTime"]["output"];
+};
+
+export type AssessmentInstrument =
+  | "ACSA"
+  | "AUDIT"
+  | "AUDIT_C"
+  | "BARC_10"
+  | "CUDIT_R"
+  | "CWS"
+  | "HSI"
+  | "PGSI"
+  | "SAWS"
+  | "SOWS";
+
+export type BeverageType =
+  | "BEER"
+  | "CIDER"
+  | "COCKTAIL"
+  | "OTHER"
+  | "SPIRITS"
+  | "WINE";
 
 export type CheckIn = {
   cravingLevel: Scalars["Int"]["output"];
@@ -112,6 +175,15 @@ export type CheckIn = {
 export type ClaimRewardInput = {
   claimedAt: Scalars["DateTime"]["input"];
   id: Scalars["OID"]["input"];
+};
+
+export type ClearMedicationPlanInput = {
+  aidId: Scalars["OID"]["input"];
+};
+
+export type CompleteMissionInput = {
+  missionKey: Scalars["String"]["input"];
+  programId: Scalars["OID"]["input"];
 };
 
 export type CopingStrategy =
@@ -137,6 +209,7 @@ export type Craving = {
   durationMinutes: Maybe<Scalars["Int"]["output"]>;
   id: Scalars["OID"]["output"];
   intensity: Scalars["Int"]["output"];
+  intensityAfter: Maybe<Scalars["Int"]["output"]>;
   note: Maybe<Scalars["String"]["output"]>;
   outcome: CravingOutcome;
   strategy: Maybe<CopingStrategy>;
@@ -182,6 +255,10 @@ export type DailyCheckInInput = {
   weightKg?: InputMaybe<Scalars["Float"]["input"]>;
 };
 
+export type DeleteAssessmentInput = {
+  id: Scalars["OID"]["input"];
+};
+
 export type DeleteCheckInInput = {
   id: Scalars["OID"]["input"];
 };
@@ -190,7 +267,31 @@ export type DeleteCravingInput = {
   id: Scalars["OID"]["input"];
 };
 
+export type DeleteDrinkInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type DeleteDrugCheckInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type DeleteExclusionInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type DeleteGamblingLossInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type DeleteIfThenPlanInput = {
+  id: Scalars["OID"]["input"];
+};
+
 export type DeleteRewardGoalInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type DeleteRiskyPlaceInput = {
   id: Scalars["OID"]["input"];
 };
 
@@ -198,13 +299,115 @@ export type DeleteSlipInput = {
   id: Scalars["OID"]["input"];
 };
 
+export type DoseStep = {
+  dose: Scalars["String"]["output"];
+  fromDay: Scalars["Int"]["output"];
+  id: Scalars["OID"]["output"];
+  timesPerDay: Scalars["Int"]["output"];
+};
+
+export type DoseStepInput = {
+  dose: Scalars["String"]["input"];
+  fromDay: Scalars["Int"]["input"];
+  id: Scalars["OID"]["input"];
+  timesPerDay: Scalars["Int"]["input"];
+};
+
+export type DrinkEntry = {
+  abvPercent: Scalars["Float"]["output"];
+  beverage: BeverageType;
+  gramsAlcohol: Scalars["Float"]["output"];
+  id: Scalars["OID"]["output"];
+  slipId: Scalars["OID"]["output"];
+  standardDrinks: Scalars["Float"]["output"];
+  timestamp: Scalars["DateTime"]["output"];
+  volumeMl: Scalars["Float"]["output"];
+};
+
+export type DrugCheck = {
+  actions: Array<HarmReductionAction>;
+  checkedAt: Scalars["DateTime"]["output"];
+  expectedSubstance: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["OID"]["output"];
+  note: Maybe<Scalars["String"]["output"]>;
+  result: DrugTestResult;
+  testType: DrugTestType;
+};
+
+export type DrugTestResult = "INCONCLUSIVE" | "NEGATIVE" | "POSITIVE";
+
+export type DrugTestType =
+  | "BENZO_STRIP"
+  | "CHECKING_SERVICE"
+  | "FENTANYL_STRIP"
+  | "MEDETOMIDINE_STRIP"
+  | "NITAZENE_STRIP"
+  | "OTHER"
+  | "REAGENT_KIT"
+  | "XYLAZINE_STRIP";
+
+export type EndProgramInput = {
+  endedAt: Scalars["DateTime"]["input"];
+  programId: Scalars["OID"]["input"];
+};
+
 export type EndQuitAidInput = {
   endedAt: Scalars["DateTime"]["input"];
   id: Scalars["OID"]["input"];
 };
 
+export type EndSafetyCheckInput = {
+  endedAt: Scalars["DateTime"]["input"];
+  id: Scalars["OID"]["input"];
+  outcome: SafetyCheckOutcome;
+};
+
+export type Exclusion = {
+  endDate: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["OID"]["output"];
+  note: Maybe<Scalars["String"]["output"]>;
+  scheme: ExclusionScheme;
+  startDate: Scalars["String"]["output"];
+};
+
+export type ExclusionScheme =
+  | "BANK_BLOCK"
+  | "BETBLOCKER"
+  | "GAMBAN"
+  | "GAMSTOP"
+  | "OASIS"
+  | "OTHER"
+  | "VENUE";
+
+export type GamblingLoss = {
+  amount: Scalars["Float"]["output"];
+  date: Scalars["String"]["output"];
+  id: Scalars["OID"]["output"];
+  note: Maybe<Scalars["String"]["output"]>;
+};
+
+export type HarmReductionAction =
+  | "DID_NOT_USE"
+  | "DISCARDED"
+  | "NALOXONE_READY"
+  | "NOT_ALONE"
+  | "TOLD_SOMEONE"
+  | "USED_LESS"
+  | "WENT_SLOWER";
+
+export type IfThenPlan = {
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["OID"]["output"];
+  ifText: Scalars["String"]["output"];
+  lastReviewedAt: Maybe<Scalars["DateTime"]["output"]>;
+  strategy: Maybe<CopingStrategy>;
+  thenText: Scalars["String"]["output"];
+  trigger: Maybe<CravingTrigger>;
+};
+
 export type LogAidUseInput = {
   aidId: Scalars["OID"]["input"];
+  beforeDrinking?: InputMaybe<Scalars["Boolean"]["input"]>;
   id: Scalars["OID"]["input"];
   note?: InputMaybe<Scalars["String"]["input"]>;
   timestamp: Scalars["DateTime"]["input"];
@@ -214,11 +417,45 @@ export type LogCravingInput = {
   durationMinutes?: InputMaybe<Scalars["Int"]["input"]>;
   id: Scalars["OID"]["input"];
   intensity: Scalars["Int"]["input"];
+  intensityAfter?: InputMaybe<Scalars["Int"]["input"]>;
   note?: InputMaybe<Scalars["String"]["input"]>;
   outcome: CravingOutcome;
   strategy?: InputMaybe<CopingStrategy>;
   timestamp: Scalars["DateTime"]["input"];
   trigger: CravingTrigger;
+};
+
+export type LogDrinkInput = {
+  abvPercent: Scalars["Float"]["input"];
+  beverage: BeverageType;
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+  slipId: Scalars["OID"]["input"];
+  timestamp: Scalars["DateTime"]["input"];
+  volumeMl: Scalars["Float"]["input"];
+};
+
+export type LogDrugCheckInput = {
+  actions?: InputMaybe<Array<HarmReductionAction>>;
+  checkedAt: Scalars["DateTime"]["input"];
+  expectedSubstance?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+  result: DrugTestResult;
+  testType: DrugTestType;
+};
+
+export type LogGamblingLossInput = {
+  amount: Scalars["Float"]["input"];
+  date: Scalars["String"]["input"];
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type LogScreenTimeInput = {
+  date: Scalars["String"]["input"];
+  id: Scalars["OID"]["input"];
+  minutes: Scalars["Int"]["input"];
 };
 
 export type LogSlipInput = {
@@ -229,10 +466,42 @@ export type LogSlipInput = {
   units: Scalars["Float"]["input"];
 };
 
+export type MarkNaloxoneUsedInput = {
+  id: Scalars["OID"]["input"];
+  usedAt: Scalars["DateTime"]["input"];
+};
+
+export type MedicationPlan = {
+  aidId: Scalars["OID"]["output"];
+  id: Scalars["OID"]["output"];
+  note: Maybe<Scalars["String"]["output"]>;
+  source: MedicationPlanSource;
+  startDate: Scalars["String"]["output"];
+  steps: Array<DoseStep>;
+};
+
+export type MedicationPlanSource = "CLINICIAN" | "LEAFLET" | "SELF";
+
 export type Motivation = {
   id: Scalars["OID"]["output"];
   imageUrl: Maybe<Scalars["URL"]["output"]>;
   text: Scalars["String"]["output"];
+};
+
+export type NaloxoneKind =
+  | "AUTO_INJECTOR"
+  | "INJECTABLE"
+  | "NASAL_SPRAY_4MG"
+  | "NASAL_SPRAY_8MG"
+  | "OTHER";
+
+export type NaloxoneKit = {
+  addedAt: Scalars["DateTime"]["output"];
+  expiresOn: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["OID"]["output"];
+  kind: NaloxoneKind;
+  location: Maybe<Scalars["String"]["output"]>;
+  usedAt: Maybe<Scalars["DateTime"]["output"]>;
 };
 
 export type ProductType =
@@ -254,6 +523,21 @@ export type ProductType =
   | "STIMULANTS"
   | "SUGAR"
   | "VAPE";
+
+export type ProgramEnrollment = {
+  completedMissions: Array<Scalars["String"]["output"]>;
+  endedAt: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["OID"]["output"];
+  program: ProgramKey;
+  startedAt: Scalars["DateTime"]["output"];
+};
+
+export type ProgramKey =
+  | "DAILY_MISSIONS"
+  | "DRY_MONTH"
+  | "QUIT_VAPING"
+  | "SKILL_LESSONS"
+  | "T_BREAK";
 
 export type QuitAid = {
   dosage: Maybe<Scalars["String"]["output"]>;
@@ -292,20 +576,36 @@ export type QuitAttempt = {
   reason: Maybe<Scalars["String"]["output"]>;
 };
 
+export type QuitJourneyLocalState = {
+  riskyPlaces: Maybe<Array<RiskyPlace>>;
+  safetyChecks: Maybe<Array<SafetyCheck>>;
+};
+
 export type QuitJourneyState = {
   aidUses: Array<AidUse>;
   aids: Array<QuitAid>;
+  assessments: Maybe<Array<Assessment>>;
   checkIns: Array<CheckIn>;
   cravings: Array<Craving>;
   displayName: Maybe<Scalars["String"]["output"]>;
+  drinks: Maybe<Array<DrinkEntry>>;
+  drugChecks: Maybe<Array<DrugCheck>>;
+  exclusions: Maybe<Array<Exclusion>>;
+  gamblingLosses: Maybe<Array<GamblingLoss>>;
+  ifThenPlans: Maybe<Array<IfThenPlan>>;
+  medicationPlans: Maybe<Array<MedicationPlan>>;
   motivations: Array<Motivation>;
+  naloxoneKits: Maybe<Array<NaloxoneKit>>;
   pastAttempts: Array<QuitAttempt>;
   plan: Maybe<QuitPlan>;
   prepTasksDone: Array<Scalars["String"]["output"]>;
+  programs: Maybe<Array<ProgramEnrollment>>;
   quitlinePhone: Maybe<Scalars["String"]["output"]>;
   rewards: Array<RewardGoal>;
+  screenTime: Maybe<Array<ScreenTimeEntry>>;
   slips: Array<Slip>;
   supportContacts: Array<SupportContact>;
+  takeHomes: Maybe<Array<TakeHome>>;
 };
 
 export type QuitPlan = {
@@ -316,15 +616,34 @@ export type QuitPlan = {
   packPrice: Scalars["Float"]["output"];
   productType: ProductType;
   quitDateTime: Scalars["DateTime"]["output"];
+  standardDrinkGrams: Maybe<Scalars["Float"]["output"]>;
   unitLabel: Maybe<Scalars["String"]["output"]>;
   unitsPerDay: Scalars["Float"]["output"];
   unitsPerPack: Scalars["Int"]["output"];
   yearsSmoked: Maybe<Scalars["Float"]["output"]>;
 };
 
+export type RecordAssessmentInput = {
+  answers: Array<Scalars["Int"]["input"]>;
+  id: Scalars["OID"]["input"];
+  instrument: AssessmentInstrument;
+  takenAt: Scalars["DateTime"]["input"];
+};
+
+export type RecordTakeHomeInput = {
+  aidId: Scalars["OID"]["input"];
+  doses: Scalars["Int"]["input"];
+  id: Scalars["OID"]["input"];
+  pickedUpOn: Scalars["String"]["input"];
+};
+
 export type RecoveryGoal = "ABSTINENCE" | "REDUCTION";
 
 export type RemoveMotivationInput = {
+  id: Scalars["OID"]["input"];
+};
+
+export type RemoveNaloxoneKitInput = {
   id: Scalars["OID"]["input"];
 };
 
@@ -339,6 +658,11 @@ export type RestartJourneyInput = {
   reason?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type ReviewIfThenPlanInput = {
+  id: Scalars["OID"]["input"];
+  reviewedAt: Scalars["DateTime"]["input"];
+};
+
 export type RewardGoal = {
   claimedAt: Maybe<Scalars["DateTime"]["output"]>;
   cost: Scalars["Float"]["output"];
@@ -347,8 +671,44 @@ export type RewardGoal = {
   title: Scalars["String"]["output"];
 };
 
+export type RiskyPlace = {
+  id: Scalars["OID"]["output"];
+  label: Scalars["String"]["output"];
+  lat: Scalars["Float"]["output"];
+  lng: Scalars["Float"]["output"];
+  planId: Maybe<Scalars["OID"]["output"]>;
+  radiusM: Scalars["Int"]["output"];
+};
+
+export type SafetyCheck = {
+  contactIds: Array<Scalars["OID"]["output"]>;
+  durationMinutes: Scalars["Int"]["output"];
+  endedAt: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["OID"]["output"];
+  note: Maybe<Scalars["String"]["output"]>;
+  outcome: SafetyCheckOutcome;
+  startedAt: Scalars["DateTime"]["output"];
+};
+
+export type SafetyCheckOutcome = "ACTIVE" | "ALARM" | "CANCELLED" | "OK";
+
+export type ScreenTimeEntry = {
+  date: Scalars["String"]["output"];
+  id: Scalars["OID"]["output"];
+  minutes: Scalars["Int"]["output"];
+};
+
 export type SetDisplayNameInput = {
   displayName?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type SetMedicationPlanInput = {
+  aidId: Scalars["OID"]["input"];
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+  source: MedicationPlanSource;
+  startDate: Scalars["String"]["input"];
+  steps: Array<DoseStepInput>;
 };
 
 export type SetQuitPlanInput = {
@@ -359,6 +719,7 @@ export type SetQuitPlanInput = {
   packPrice: Scalars["Float"]["input"];
   productType: ProductType;
   quitDateTime: Scalars["DateTime"]["input"];
+  standardDrinkGrams?: InputMaybe<Scalars["Float"]["input"]>;
   unitLabel?: InputMaybe<Scalars["String"]["input"]>;
   unitsPerDay: Scalars["Float"]["input"];
   unitsPerPack: Scalars["Int"]["input"];
@@ -377,6 +738,20 @@ export type Slip = {
   units: Scalars["Float"]["output"];
 };
 
+export type StartProgramInput = {
+  id: Scalars["OID"]["input"];
+  program: ProgramKey;
+  startedAt: Scalars["DateTime"]["input"];
+};
+
+export type StartSafetyCheckInput = {
+  contactIds?: InputMaybe<Array<Scalars["OID"]["input"]>>;
+  durationMinutes: Scalars["Int"]["input"];
+  id: Scalars["OID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
+  startedAt: Scalars["DateTime"]["input"];
+};
+
 export type SupportContact = {
   id: Scalars["OID"]["output"];
   name: Scalars["String"]["output"];
@@ -384,9 +759,24 @@ export type SupportContact = {
   relation: Maybe<Scalars["String"]["output"]>;
 };
 
+export type TakeHome = {
+  aidId: Scalars["OID"]["output"];
+  doses: Scalars["Int"]["output"];
+  id: Scalars["OID"]["output"];
+  pickedUpOn: Scalars["String"]["output"];
+};
+
 export type TogglePrepTaskInput = {
   done: Scalars["Boolean"]["input"];
   taskKey: Scalars["String"]["input"];
+};
+
+export type UpdateIfThenPlanInput = {
+  id: Scalars["OID"]["input"];
+  ifText: Scalars["String"]["input"];
+  strategy?: InputMaybe<CopingStrategy>;
+  thenText: Scalars["String"]["input"];
+  trigger?: InputMaybe<CravingTrigger>;
 };
 
 export type WithdrawalSymptom =

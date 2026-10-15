@@ -38,8 +38,22 @@ export const initialGlobalState: QuitJourneyGlobalState = {
   aidUses: [],
   supportContacts: [],
   quitlinePhone: null,
+  naloxoneKits: [],
+  drugChecks: [],
+  exclusions: [],
+  ifThenPlans: [],
+  drinks: [],
+  screenTime: [],
+  gamblingLosses: [],
+  assessments: [],
+  medicationPlans: [],
+  takeHomes: [],
+  programs: [],
 };
-export const initialLocalState: QuitJourneyLocalState = {};
+export const initialLocalState: QuitJourneyLocalState = {
+  safetyChecks: [],
+  riskyPlaces: [],
+};
 
 export const utils: DocumentModelUtils<QuitJourneyPHState> = {
   fileExtension: ".quit",

@@ -6,6 +6,7 @@ import { computeMoney, journeyPeriods, type MoneyStats } from "./money.js";
 import { computePrep, type PrepStatus } from "./prep.js";
 import { computeReduction, type ReductionStatus } from "./reduction.js";
 import { profileForPlan, type SubstanceProfile } from "./substances.js";
+import { computeToolkit, type JourneyToolkit } from "./toolkit/index.js";
 
 export * from "./gamification.js";
 export * from "./health.js";
@@ -15,6 +16,7 @@ export * from "./prep.js";
 export * from "./reduction.js";
 export * from "./substances.js";
 export * from "./time.js";
+export * from "./toolkit/index.js";
 
 export type RecoveryGoalKind = "ABSTINENCE" | "REDUCTION";
 
@@ -38,6 +40,8 @@ export interface JourneySnapshot {
   prep: PrepStatus;
   gamification: Gamification;
   insights: Insights;
+  /** Recovery toolkit: reward ladder, harm reduction, programs, medication, drinks, assessments. */
+  toolkit: JourneyToolkit;
 }
 
 /** Everything the UI shows, derived purely from document state and a clock value. */
@@ -65,5 +69,6 @@ export function computeJourney(state: QuitJourneyState, now: number): JourneySna
     prep: computePrep(state, now),
     gamification: computeGamification(state, periods, streaks, money, now, { unit: profile.unit, reduction }),
     insights: computeInsights(state, now),
+    toolkit: computeToolkit(state, now),
   };
 }

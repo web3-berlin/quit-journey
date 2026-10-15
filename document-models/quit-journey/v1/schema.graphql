@@ -19,6 +19,32 @@ scalar Amount_Crypto
 scalar Amount
 scalar Upload
 
+enum SafetyCheckOutcome { ACTIVE OK ALARM CANCELLED }
+
+type SafetyCheck {
+    id: OID!
+    startedAt: DateTime!
+    durationMinutes: Int!
+    note: String
+    contactIds: [OID!]!
+    endedAt: DateTime
+    outcome: SafetyCheckOutcome!
+}
+
+type RiskyPlace {
+    id: OID!
+    label: String!
+    lat: Float!
+    lng: Float!
+    radiusM: Int!
+    planId: OID
+}
+
+type QuitJourneyLocalState {
+    safetyChecks: [SafetyCheck!]
+    riskyPlaces: [RiskyPlace!]
+}
+
 enum ProductType { CIGARETTES ROLL_YOUR_OWN CIGARS VAPE HEATED_TOBACCO OTHER ALCOHOL CANNABIS OPIOIDS STIMULANTS BENZODIAZEPINES KRATOM GAMBLING GAMING PORNOGRAPHY SOCIAL_MEDIA CAFFEINE SUGAR }
 enum RecoveryGoal { ABSTINENCE REDUCTION }
 enum CravingTrigger { STRESS COFFEE ALCOHOL AFTER_MEAL BOREDOM SOCIAL WORK DRIVING WAKING_UP PHONE ARGUMENT CELEBRATION LONELINESS OTHER HUNGRY ANGRY TIRED PAIN PAYDAY PEOPLE_PLACES SEEING_IT BAD_NEWS }
@@ -39,6 +65,7 @@ type QuitPlan {
     unitLabel: String
     goal: RecoveryGoal
     dailyLimit: Float
+    standardDrinkGrams: Float
 }
 
 type Motivation {
@@ -56,6 +83,7 @@ type Craving {
     outcome: CravingOutcome!
     durationMinutes: Int
     note: String
+    intensityAfter: Int
 }
 
 type Slip {
@@ -107,6 +135,7 @@ type AidUse {
     aidId: OID!
     timestamp: DateTime!
     note: String
+    beforeDrinking: Boolean
 }
 
 type SupportContact {
@@ -130,7 +159,129 @@ type QuitJourneyState {
     aidUses: [AidUse!]!
     supportContacts: [SupportContact!]!
     quitlinePhone: String
+    naloxoneKits: [NaloxoneKit!]
+    drugChecks: [DrugCheck!]
+    exclusions: [Exclusion!]
+    ifThenPlans: [IfThenPlan!]
+    drinks: [DrinkEntry!]
+    screenTime: [ScreenTimeEntry!]
+    gamblingLosses: [GamblingLoss!]
+    assessments: [Assessment!]
+    medicationPlans: [MedicationPlan!]
+    takeHomes: [TakeHome!]
+    programs: [ProgramEnrollment!]
 }
+
+enum NaloxoneKind { NASAL_SPRAY_4MG NASAL_SPRAY_8MG INJECTABLE AUTO_INJECTOR OTHER }
+enum DrugTestType { FENTANYL_STRIP XYLAZINE_STRIP NITAZENE_STRIP MEDETOMIDINE_STRIP BENZO_STRIP REAGENT_KIT CHECKING_SERVICE OTHER }
+enum DrugTestResult { POSITIVE NEGATIVE INCONCLUSIVE }
+enum HarmReductionAction { DID_NOT_USE USED_LESS WENT_SLOWER NOT_ALONE NALOXONE_READY DISCARDED TOLD_SOMEONE }
+enum BeverageType { BEER WINE SPIRITS CIDER COCKTAIL OTHER }
+enum AssessmentInstrument { AUDIT_C AUDIT HSI CUDIT_R PGSI BARC_10 SOWS SAWS CWS ACSA }
+enum MedicationPlanSource { CLINICIAN LEAFLET SELF }
+enum ProgramKey { QUIT_VAPING DAILY_MISSIONS DRY_MONTH T_BREAK SKILL_LESSONS }
+enum ExclusionScheme { GAMSTOP OASIS BETBLOCKER GAMBAN BANK_BLOCK VENUE OTHER }
+
+type NaloxoneKit {
+    id: OID!
+    kind: NaloxoneKind!
+    location: String
+    expiresOn: String
+    addedAt: DateTime!
+    usedAt: DateTime
+}
+
+type DrugCheck {
+    id: OID!
+    checkedAt: DateTime!
+    expectedSubstance: String
+    testType: DrugTestType!
+    result: DrugTestResult!
+    actions: [HarmReductionAction!]!
+    note: String
+}
+
+type Exclusion {
+    id: OID!
+    scheme: ExclusionScheme!
+    startDate: String!
+    endDate: String
+    note: String
+}
+
+type IfThenPlan {
+    id: OID!
+    trigger: CravingTrigger
+    ifText: String!
+    thenText: String!
+    strategy: CopingStrategy
+    createdAt: DateTime!
+    lastReviewedAt: DateTime
+}
+
+type DrinkEntry {
+    id: OID!
+    timestamp: DateTime!
+    beverage: BeverageType!
+    volumeMl: Float!
+    abvPercent: Float!
+    gramsAlcohol: Float!
+    standardDrinks: Float!
+    slipId: OID!
+}
+
+type ScreenTimeEntry {
+    id: OID!
+    date: String!
+    minutes: Int!
+}
+
+type GamblingLoss {
+    id: OID!
+    date: String!
+    amount: Float!
+    note: String
+}
+
+type Assessment {
+    id: OID!
+    instrument: AssessmentInstrument!
+    takenAt: DateTime!
+    answers: [Int!]!
+    score: Int!
+}
+
+type DoseStep {
+    id: OID!
+    fromDay: Int!
+    dose: String!
+    timesPerDay: Int!
+}
+
+type MedicationPlan {
+    id: OID!
+    aidId: OID!
+    source: MedicationPlanSource!
+    startDate: String!
+    steps: [DoseStep!]!
+    note: String
+}
+
+type TakeHome {
+    id: OID!
+    aidId: OID!
+    pickedUpOn: String!
+    doses: Int!
+}
+
+type ProgramEnrollment {
+    id: OID!
+    program: ProgramKey!
+    startedAt: DateTime!
+    completedMissions: [String!]!
+    endedAt: DateTime
+}
+
 
 # plan
 
@@ -146,6 +297,7 @@ input SetQuitPlanInput {
     unitLabel: String
     goal: RecoveryGoal
     dailyLimit: Float
+    standardDrinkGrams: Float
 }
 
 input SetDisplayNameInput {
@@ -178,6 +330,7 @@ input LogCravingInput {
     outcome: CravingOutcome!
     durationMinutes: Int
     note: String
+    intensityAfter: Int
 }
 
 input DeleteCravingInput {
@@ -261,6 +414,7 @@ input LogAidUseInput {
     aidId: OID!
     timestamp: DateTime!
     note: String
+    beforeDrinking: Boolean
 }
 
 # support
@@ -278,4 +432,197 @@ input RemoveSupportContactInput {
 
 input SetQuitlineInput {
     phone: String
+}
+
+# safety
+
+input AddNaloxoneKitInput {
+    id: OID!
+    kind: NaloxoneKind!
+    location: String
+    expiresOn: String
+    addedAt: DateTime!
+}
+
+input MarkNaloxoneUsedInput {
+    id: OID!
+    usedAt: DateTime!
+}
+
+input RemoveNaloxoneKitInput {
+    id: OID!
+}
+
+input LogDrugCheckInput {
+    id: OID!
+    checkedAt: DateTime!
+    expectedSubstance: String
+    testType: DrugTestType!
+    result: DrugTestResult!
+    actions: [HarmReductionAction!]
+    note: String
+}
+
+input DeleteDrugCheckInput {
+    id: OID!
+}
+
+input AddExclusionInput {
+    id: OID!
+    scheme: ExclusionScheme!
+    startDate: String!
+    endDate: String
+    note: String
+}
+
+input DeleteExclusionInput {
+    id: OID!
+}
+
+input StartSafetyCheckInput {
+    id: OID!
+    startedAt: DateTime!
+    durationMinutes: Int!
+    note: String
+    contactIds: [OID!]
+}
+
+input EndSafetyCheckInput {
+    id: OID!
+    endedAt: DateTime!
+    outcome: SafetyCheckOutcome!
+}
+
+input AddRiskyPlaceInput {
+    id: OID!
+    label: String!
+    lat: Float!
+    lng: Float!
+    radiusM: Int!
+    planId: OID
+}
+
+input DeleteRiskyPlaceInput {
+    id: OID!
+}
+
+# plans
+
+input AddIfThenPlanInput {
+    id: OID!
+    trigger: CravingTrigger
+    ifText: String!
+    thenText: String!
+    strategy: CopingStrategy
+    createdAt: DateTime!
+}
+
+input UpdateIfThenPlanInput {
+    id: OID!
+    trigger: CravingTrigger
+    ifText: String!
+    thenText: String!
+    strategy: CopingStrategy
+}
+
+input ReviewIfThenPlanInput {
+    id: OID!
+    reviewedAt: DateTime!
+}
+
+input DeleteIfThenPlanInput {
+    id: OID!
+}
+
+# tracking
+
+input LogDrinkInput {
+    id: OID!
+    slipId: OID!
+    timestamp: DateTime!
+    beverage: BeverageType!
+    volumeMl: Float!
+    abvPercent: Float!
+    note: String
+}
+
+input DeleteDrinkInput {
+    id: OID!
+}
+
+input LogScreenTimeInput {
+    id: OID!
+    date: String!
+    minutes: Int!
+}
+
+input LogGamblingLossInput {
+    id: OID!
+    date: String!
+    amount: Float!
+    note: String
+}
+
+input DeleteGamblingLossInput {
+    id: OID!
+}
+
+# assessments
+
+input RecordAssessmentInput {
+    id: OID!
+    instrument: AssessmentInstrument!
+    takenAt: DateTime!
+    answers: [Int!]!
+}
+
+input DeleteAssessmentInput {
+    id: OID!
+}
+
+# medication
+
+input DoseStepInput {
+    id: OID!
+    fromDay: Int!
+    dose: String!
+    timesPerDay: Int!
+}
+
+input SetMedicationPlanInput {
+    id: OID!
+    aidId: OID!
+    source: MedicationPlanSource!
+    startDate: String!
+    steps: [DoseStepInput!]!
+    note: String
+}
+
+input ClearMedicationPlanInput {
+    aidId: OID!
+}
+
+input RecordTakeHomeInput {
+    id: OID!
+    aidId: OID!
+    pickedUpOn: String!
+    doses: Int!
+}
+
+# programs
+
+input StartProgramInput {
+    id: OID!
+    program: ProgramKey!
+    startedAt: DateTime!
+}
+
+input CompleteMissionInput {
+    programId: OID!
+    missionKey: String!
+}
+
+input EndProgramInput {
+    programId: OID!
+    endedAt: DateTime!
 }

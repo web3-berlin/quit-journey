@@ -28,11 +28,25 @@ export function defaultGlobalState(): QuitJourneyGlobalState {
     aidUses: [],
     supportContacts: [],
     quitlinePhone: null,
+    naloxoneKits: [],
+    drugChecks: [],
+    exclusions: [],
+    ifThenPlans: [],
+    drinks: [],
+    screenTime: [],
+    gamblingLosses: [],
+    assessments: [],
+    medicationPlans: [],
+    takeHomes: [],
+    programs: [],
   };
 }
 
 export function defaultLocalState(): QuitJourneyLocalState {
-  return {};
+  return {
+    safetyChecks: [],
+    riskyPlaces: [],
+  };
 }
 
 export function defaultPHState(): QuitJourneyPHState {
