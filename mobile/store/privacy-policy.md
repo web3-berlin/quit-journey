@@ -1,6 +1,6 @@
 # Quit Journey privacy policy
 
-_Last updated: 15 October 2026_
+_Last updated: 17 October 2026_
 
 Quit Journey is an addiction-recovery app. This policy explains what happens to the information you enter.
 
