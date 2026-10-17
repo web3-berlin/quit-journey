@@ -44,7 +44,7 @@ Quit Journey supports your recovery; it isn't medical advice or treatment. Talk 
 
 **Category:** Health & Fitness
 **Tags:** Addiction recovery, Quit smoking, Sobriety
-**Contact email:** _your public support email_
+**Contact email:** frank@web3.berlin
 **Privacy policy URL:** _public URL of store/privacy-policy.md_
 
 ## Languages

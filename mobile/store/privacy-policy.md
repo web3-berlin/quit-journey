@@ -54,4 +54,4 @@ If this policy changes, the new version will be published at this address with a
 
 ## Contact
 
-_your support email_
+frank@web3.berlin

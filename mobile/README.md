@@ -3,7 +3,7 @@
 The phone app around the shared Quit Journey UI (`editors/quit-journey-editor/QuitJourneyApp.tsx`).
 It runs the real document-model reducer locally and stores each journey (one per addiction) in app-private storage, so it works fully offline with no account. Version 1.0 data (`quit-journey.json`) is migrated automatically into the journey index on first launch.
 
-- **App ID:** `com.w3b.quitjourney` — permanent after the first Play upload. Change it in `capacitor.config.ts` and `android/app/build.gradle` *before* that if you want another one.
+- **App ID:** `com.w3b.health.quitjourney` (Play package name, permanent once uploaded). The Java code package (`namespace`) stays `com.w3b.quitjourney`, which Android allows.
 - **Stack:** Vite + React, Capacitor 8 (target SDK 36), local notifications, filesystem, share, geolocation, CapacitorHttp, plus the app's own plugin `QjNative` (`android/app/src/main/java/com/w3b/quitjourney/QjNativePlugin.java`).
 
 ## Native capabilities (`src/host.ts`)

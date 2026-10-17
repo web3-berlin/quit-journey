@@ -4,7 +4,7 @@ android {
     namespace = "com.w3b.quitjourney"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.w3b.quitjourney"
+        applicationId "com.w3b.health.quitjourney"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // CI passes VERSION_CODE (must increase with every Play upload) and VERSION_NAME.

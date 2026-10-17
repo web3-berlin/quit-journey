@@ -77,7 +77,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.w3b.quitjourney
+          packageName: com.w3b.health.quitjourney
           releaseFiles: mobile/android/app/build/outputs/bundle/release/app-release.aab
           track: ${{ github.event.inputs.track || 'internal' }}
           status: draft

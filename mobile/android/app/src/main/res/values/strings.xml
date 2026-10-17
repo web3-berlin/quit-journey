@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Quit Journey</string>
     <string name="title_activity_main">Quit Journey</string>
-    <string name="package_name">com.w3b.quitjourney</string>
+    <string name="package_name">com.w3b.health.quitjourney</string>
     <string name="disguised_label">Notes</string>
-    <string name="custom_url_scheme">com.w3b.quitjourney</string>
+    <string name="custom_url_scheme">com.w3b.health.quitjourney</string>
 </resources>

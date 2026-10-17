@@ -2,7 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
   // The Play Store package name is permanent once the first build is uploaded.
-  appId: "com.w3b.quitjourney",
+  appId: "com.w3b.health.quitjourney",
   appName: "Quit Journey",
   webDir: "dist",
   android: {
