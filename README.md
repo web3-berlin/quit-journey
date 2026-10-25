@@ -1,190 +1,77 @@
-# Document Model Boilerplate
+<p align="center">
+  <img src="docs/screenshots/icon.png" width="96" alt="Quit Journey icon">
+</p>
 
-This Document Model Boilerplate provides code generation for scaffolding editors and models.
-It ensures compatibility with host applications like Connect and the Reactors for seamless document model and editor integration.
+<h1 align="center">Quit Journey</h1>
 
-## Standard Document Model Workflow with help of the boilerplate.
+<p align="center">
+  An open-source, offline-first companion for quitting smoking — and any other addiction.<br>
+  Recovery timelines, cravings with personal coping insights, savings, missions and badges, in 41 languages.
+</p>
 
-This tutorial will guide you through the process of creating a new document model using the Document Model Editor in the Connect app.
+<p align="center">
+  <img src="docs/screenshots/feature-graphic.jpg" width="720" alt="Quit Journey feature graphic">
+</p>
 
-<details>
-<summary>Available NPM commands</summary>
+| Today                                                                                                   | Health                                                                                | SOS                                                                                                | Insights                                                                                                      |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/screenshots/01-today.jpg" width="200" alt="Today: smoke-free counter and daily mission"> | <img src="docs/screenshots/02-health.jpg" width="200" alt="Health recovery timeline"> | <img src="docs/screenshots/03-sos.jpg" width="200" alt="SOS craving help with breathing exercise"> | <img src="docs/screenshots/04-insights.jpg" width="200" alt="Insights: which coping strategies work for you"> |
 
-- `generate`: Updates the generated code according to the JSON spec and GraphQL schema of your document model, made in Connect.
-- `lint`: Checks for errors with oxlint, including type-aware rules and TypeScript type checking.
-- `format`: Formats the code using oxfmt.
-- `build`: Builds the library project using Vite.
-- `storybook`: Starts Storybook in development mode.
-- `build-storybook`: Builds Storybook.
-- `test`: Runs Jest for testing.
+| Badges                                                                         | Toolkit                                                                        | Rewards                                                                                |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| <img src="docs/screenshots/05-badges.jpg" width="200" alt="Badges and levels"> | <img src="docs/screenshots/06-toolkit.jpg" width="200" alt="Recovery toolkit"> | <img src="docs/screenshots/07-rewards.jpg" width="200" alt="Savings and reward goals"> |
 
-</details>
+> **Not medical advice.** Quit Journey is a self-help tool. It does not diagnose or treat any condition and is not a substitute for a doctor, pharmacist or addiction service. In an emergency call your local emergency number.
 
-### 1. Defining Your Document Model GraphQL Schema
+## What it does
 
-Start by creating your own 'Powerhouse Project' (Document model + editor).
+- **Any addiction, one journey each:** nicotine (cigarettes, vapes, heated tobacco), alcohol, cannabis, opioids, stimulants and behavioural addictions such as gambling or screen time. Quit outright or cut down with a reduction plan.
+- **Recovery timeline:** what is happening in your body, with sources, and how far along you are.
+- **Cravings and slips:** log cravings with triggers and strategies; learn which strategies actually work for you and when you are most at risk. Slips are recorded without resetting your progress.
+- **SOS:** breathing exercise, urge surfing, your own reasons and a one-tap message to a support contact.
+- **Toolkit:** if-then plans, risky places, daily check-ins with validated scales, medication schedules, structured programs, harm reduction (naloxone, drug checking, safety timer) and a meeting finder.
+- **Motivation:** money saved, reward goals, daily missions, XP, levels and badges.
+- **Privacy:** no account, no server, no tracking. Data stays on the device; optional PIN lock, screenshot blocking and a disguised launcher icon.
+- **41 languages** via react-intl (ICU). Non-English catalogs are machine-translated — corrections are very welcome.
 
-Step 1: Run the following command to set up your project inside this directory:
+## How it is built
+
+Quit Journey is a [Powerhouse](https://www.powerhouse.inc) reactor package. The journey is a document (`w3b/quit-journey`, `.quit`) whose state changes only through pure, tested reducer operations, so the same document can live in a Powerhouse drive, sync between devices, or run fully offline in the phone app.
+
+```
+document-models/quit-journey/   document model: GraphQL schema, reducers, tests
+  v1/src/engine/                pure logic: substances, health, money, gamification, insights, toolkit
+editors/quit-journey-editor/    shared React UI (QuitJourneyApp) used by Connect and the app
+  i18n/                         locale catalogs and tooling (see i18n/README.md)
+mobile/                         Android app (Capacitor 8), see mobile/README.md
+```
+
+## Getting started
+
+Tested with Node.js 24.
 
 ```bash
-npm create document-model-lib
+npm install
+npm run vetra          # local Connect + Switchboard; open the printed Connect URL
+npm test               # reducer and engine tests
+npm run tsc && npm run lint
 ```
 
-Step 2: Use the Document Model Editor in the Connect app
-
-The following command gives you access to all the powerhouse CLI tools available, install it globally if you are a poweruser.
+Phone app:
 
 ```bash
-npm install ph-cmd
+cd mobile
+npm install
+npm run dev            # browser preview at http://localhost:5173
+npm run apk:debug      # needs the Android SDK, see mobile/README.md
 ```
 
-Now you are able to launch Connect in Studio Mode (Locally):
+The document model is edited through Vetra/reactor-mcp and then code-generated; never edit files under `gen/`. Schema changes must stay backward compatible (optional fields, new enum values) so existing journeys keep working. `CLAUDE.md` describes the full workflow.
 
-```bash
-npm run connect
-```
+## Contributing
 
-Open the 'Document Model' creator at the bottom of connect to define your document mode with it's GraphQL Schema Definition.
-This schema will define the structure and fields for your document model using GraphQL.
-Follow one of our tutorials on Academy to get familiar with the process.
+Issues and pull requests are welcome — especially translation fixes, recovery content with sources, and accessibility improvements. See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: see [SECURITY.md](SECURITY.md).
 
-### 2. Defining Document Model Operations
+## License
 
-Using the Document Model Operations Editor, define the operations for your document model and their GraphQL counterparts.
-These operations will handle state changes within your document model.
-
-**Best Practices:**
-
-- Clearly define CRUD operations (Create, Read, Update, Delete).
-- Use GraphQL input types to specify the parameters for each operation.
-- Ensure that operations align with user intent to maintain a clean and understandable API.
-
-### 3. Generating Scaffolding Code
-
-Export your document model as a .zip file from Connect.
-Import the .zip file into your project directory created in Step 1.
-Run the following command to generate the scaffolding code:
-
-```bash
-npm run generate YourModelName.phdm.zip
-```
-
-This will create a new directory under /document-models containing:
-
-JSON file with the document model specification.
-GraphQL file with state and operation schemas.
-A gen/ folder with autogenerated code.
-A src/ folder for your custom code implementation.
-
-### 4. Implementing Reducer Code and Unit Tests
-
-Navigate to the reducer directory:
-
-```bash
-cd document-models/"YourModelName"/src/reducers
-```
-
-Implement the reducer functions for each document model operation. These functions will handle state transitions.
-
-Add utility functions in:
-
-```bash
-document-models/"YourModelName"/src/utils.ts
-```
-
-Write unit tests to ensure the correctness of your reducers:
-
-Test files should be located in:
-
-```bash
-document-models/"YourModelName"/src/reducers/tests
-```
-
-Run the tests:
-
-```bash
-npm test
-```
-
-Test the editor functionality:
-
-```bash
-npm run connect
-```
-
-### 5. Implementing Document Editors
-
-Generate the editor template for your document model:
-
-```bash
-npm run generate -- --editor YourModelName --document-types powerhouse/YourModelName
-```
-
-The --editor flag specifies the name of your document model.
-The --document-types flag links the editor to your document model type.
-After generation:
-
-Open the editor template:
-
-```bash
-editors/YourModelName/editor.tsx
-```
-
-Customize the editor interface to suit your document model.
-
-### 6. Testing the Document Editor
-
-Run the Connect app to test your document editor:
-
-```bash
-npm run connect
-```
-
-Verify that the editor functions as expected.
-Perform end-to-end testing to ensure smooth integration between the document model and its editor.
-
-### 7. Adding a Manifest File
-
-Create a manifest file to describe your document model and editor. This enables proper integration with the host application.
-
-**Example manifest.json:**
-
-```json
-{
-  "name": "your-model-name",
-  "description": "A brief description of your document model.",
-  "category": "your-category", // e.g., "Finance", "People Ops", "Legal"
-  "publisher": {
-    "name": "your-publisher-name",
-    "url": "your-publisher-url"
-  },
-  "documentModels": [
-    {
-      "id": "your-model-id",
-      "name": "your-model-name"
-    }
-  ],
-  "editors": [
-    {
-      "id": "your-editor-id",
-      "name": "your-editor-name",
-      "documentTypes": ["your-model-id"]
-    }
-  ]
-}
-```
-
-### Steps to finalize:
-
-Place the manifest file at your project root.
-Update your index.js to export your modules and include the new document model and editor.
-
-### Final Thoughts
-
-You've now successfully created a Document Model and its corresponding Editor using the Connect app!
-
-Next Steps:
-
-- Expand functionality: Add more operations or complex logic to your document model.
-- Improve UX: Enhance the document editor for a smoother user experience.
-- Integrate with other systems: Use APIs or GraphQL to connect your document model with external services.
+[AGPL-3.0-only](LICENSE) © W3B (web3-berlin). The name "Quit Journey" and the app icon are not covered by the license; forks published to app stores should use their own name and icon.

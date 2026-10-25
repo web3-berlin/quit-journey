@@ -1,10 +1,10 @@
 {
   "name": "w3b-stop-smoking-package",
-  "description": "",
-  "category": "",
+  "description": "Quit Journey: track and support recovery from smoking and other addictions.",
+  "category": "Health",
   "publisher": {
-    "name": "",
-    "url": ""
+    "name": "W3B",
+    "url": "https://github.com/web3-berlin"
   },
   "documentModels": [
     {
