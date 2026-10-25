@@ -4,11 +4,11 @@
   "description": "Quit Journey: an open-source, offline-first companion for quitting smoking and other addictions (Powerhouse document model, editor and Android app).",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/web3-berlin/stop-smoking-package.git"
+    "url": "git+https://github.com/web3-berlin/quit-journey.git"
   },
-  "homepage": "https://github.com/web3-berlin/stop-smoking-package#readme",
+  "homepage": "https://github.com/web3-berlin/quit-journey#readme",
   "bugs": {
-    "url": "https://github.com/web3-berlin/stop-smoking-package/issues"
+    "url": "https://github.com/web3-berlin/quit-journey/issues"
   },
   "license": "AGPL-3.0-only",
   "files": [
